@@ -1,0 +1,326 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TaskSharedProcessModel
+@{
+
+}
+<div class="page-content">
+    <div class="container-fluid">
+
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <div class="mb-3" style="font-size:26px; font-weight:bold">
+                    TIẾN ĐỘ XỬ LÝ CÔNG VIỆC
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="float-md-end mb-3">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#NewTaskModal">
+                        <i class="mdi mdi-plus me-2"></i> Add New
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+            </div>
+
+        </div>
+        <div class="row mb-4">
+            <div class="col-xl-8">
+                <div class="card border border-primary">
+                    <div class="card-header bg-transparent border-primary">
+                        <h5 class="my-0 text-primary"><i class="uil-clipboard-notes me-3"></i>@Model.TodoRequest.Subject</h5>
+                    </div>
+                    <div class="card-body">
+                        <div> <input hidden asp-for="@Model.TodoRequest.TaskKey" /> </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Deadline</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.DueDate.Value.ToString("dd/MM/yyyy HH:mm")</b> </div>
+                            <div class="col-md-2">Mức độ</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.PriorityName</b></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Bắt đầu</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.StartDate.Value.ToString("dd/MM/yyyy HH:mm")</b></div>
+                            <div class="col-md-2">Hoàn thành</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.FinishDate.Value.ToString("dd/MM/yyyy HH:mm") </b></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Tình trạng</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.StatusName</b></div>
+                            <div class="col-md-2"> %Tiến độ</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.Complete%</b></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Code</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.TaskCode</b></div>
+                            <div class="col-md-2">Loại công việc</div>
+                            <div class="col-md-4"><b>@Model.TodoRequest.CategoryName</b></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Files</div>
+                            <div class="col-md-"></div>
+                        </div>
+                        <div class="row">@Html.Raw(@Model.TodoRequest.TaskContent)</div>
+                    </div>
+                    <div style="height:30px; background-color:azure; padding:5px; font-weight:bold">
+                        @Model.TodoRequest.CreatedName
+                    </div>
+                </div>
+                @foreach (TNS_Task.Areas.Tasks.Models.Task_Record zTask in Model.ListReponse)
+                {
+                    var zStartDate = "";
+                    var zFinishDate = "";
+                    if (zTask.DueDate != null)
+                    {
+                        zStartDate = zTask.DueDate.Value.ToString("dd/MM/yyyy HH:mm");
+                    }
+                    if (zTask.FinishDate != null)
+                    {
+                        zFinishDate = zTask.FinishDate.Value.ToString("dd/MM/yyyy HH:mm");
+                    }
+                    <div class="card border border-success">
+                        <div class="card-header bg-success border-success">
+                            <h5 class="my-0 text-light"><i class="uil-clipboard-notes me-3"></i>@zTask.Subject</h5>
+                        </div>
+                        <div class="card-body">
+                            <div> <input hidden asp-for="@zTask.TaskKey" /> </div>
+                          
+                            <div class="row mb-2">
+                                <div class="col-md-2">Bắt đầu</div>
+                                <div class="col-md-4"><b>@zStartDate</b></div>
+                                <div class="col-md-2">Hoàn thành</div>
+                                <div class="col-md-4"><b>@zFinishDate </b></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-2">Tình trạng</div>
+                                <div class="col-md-4"><b>@zTask.StatusName</b></div>
+                                <div class="col-md-2"> %Tiến độ</div>
+                                <div class="col-md-4"><b>@zTask.Complete%</b></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-2">Code</div>
+                                <div class="col-md-4"><b>@zTask.TaskCode</b></div>
+                                <div class="col-md-2">Loại công việc</div>
+                                <div class="col-md-4"><b>@zTask.CategoryName</b></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-2">Files</div>
+                                <div class="col-md-"></div>
+                            </div>
+                            <div class="row">@Html.Raw(@zTask.TaskContent)</div>
+                        </div>
+                        <div style="height:30px; background-color:azure; padding:5px; font-weight:bold">
+                            @Model.TodoRequest.CreatedName
+                        </div>
+
+                    </div>
+                }
+            </div>
+            <div class="col-xl-4">
+                <div class="card border border-secondary">
+                    <div class="card-header bg-transparent border-secondary">
+                        <h5 class="my-0 text-secondary"><i class="uil uil-chat-bubble-user me-3"></i>Nhận xét - trao đổi</h5>
+                    </div>
+
+                    <div id="Panel_ListComment" style="overflow-x: hidden;overflow-y: auto; width: auto; height: 400px;">
+                        <div class="text-center">
+                            <div class="spinner-border text-secondary m-1" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Waiting">
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="position-relative">
+                                <input id="txtComment" type="text" class="form-control chat-input rounded" placeholder="Enter Message...">
+
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary chat-send w-md waves-effect waves-light" onclick="SendComment()"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="NewTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thực hiện</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="SaveTask" method="post">
+                            <div> <input hidden asp-for="@Model.TodoReponse.TaskKey" /> </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-2 col-form-label">Công việc</label>
+                                <div class="col-md-10">
+                                    <input asp-for="@Model.TodoReponse.Subject" class="form-control" type="text">
+                                    <span asp-validation-for="@Model.TodoReponse.Subject"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-date-input" class="col-md-2 col-form-label">Bắt đầu</label>
+                                <div class="col-md-4">
+                                    <input asp-for="@Model.TodoReponse.StartDate" class="form-control" type="datetime-local">
+                                    <span asp-validation-for="@Model.TodoReponse.StartDate"></span>
+                                </div>
+                                <label for="example-date-input" class="col-md-2 col-form-label">Hoàn thành</label>
+                                <div class="col-md-4">
+                                    <input asp-for="@Model.TodoReponse.FinishDate" class="form-control" type="datetime-local">
+                                    <span asp-validation-for="@Model.TodoReponse.FinishDate"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-2 col-form-label">Tình trạng</label>
+                                <div class="col-md-4">
+                                    <select asp-for="@Model.TodoReponse.StatusKey" class="form-select w-sm">
+                                        @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoStatus)
+                                        {
+                                            <option value="@zItem.Value">@zItem.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <label for="example-text-input" class="col-md-2 col-form-label">%Tiến độ</label>
+                                <div class="col-md-4">
+
+                                    <select asp-for="@Model.TodoReponse.Complete" class="form-select w-sm">
+                                        <option value="00">00%</option>
+                                        <option value="10">10%</option>
+                                        <option value="20">20%</option>
+                                        <option value="30">30%</option>
+                                        <option value="40">40%</option>
+                                        <option value="50">50%</option>
+                                        <option value="60">60%</option>
+                                        <option value="70">70%</option>
+                                        <option value="80">80%</option>
+                                        <option value="90">90%</option>
+                                        <option value="100">100%</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="card-body">
+                                    <textarea asp-for="@Model.TodoReponse.TaskContent" id="classic-editor"></textarea>
+                                    <span asp-validation-for="@Model.TodoReponse.TaskContent"></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Send message</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div> <!-- container-fluid -->
+</div>
+<!-- ckeditor -->
+<script src="~/layouts/minible/libs/@@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+<!--tinymce js-->
+<script src="~/layouts/minible/libs/tinymce/tinymce.min.js"></script>
+
+<!-- init js -->
+<script src="~/layouts/minible/js/pages/form-editor.init.js"></script>
+
+<script>
+    ClassicEditor
+        .create(document.querySelector('#classic-editor'))
+        .catch(error => {
+            alert(error);
+            console.error(error);
+        });
+
+
+    function GetListComment() {
+        var key = $("#TodoRequest_TaskKey").val();
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "taskKey": key }
+        }).done(function (dataResponse) {
+            ViewComment(dataResponse);
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+    var _CommentLenght = 0;
+    function ViewComment(data) {
+        var i = 0;
+        _CommentLenght = data.length;
+        var zContent = "<ul id='ListComment' class='list-group'>";
+        for (i = 0; i < _CommentLenght; i++) {
+            zContent += "<li class='list-group-item'>";
+            zContent += "   <div class='row' style = 'font-weight:bold;font-size:12px' >";
+            zContent += "       <div class='col-7' > " + data[i].employeeName + "</div>";
+            zContent += "       <div class='col-5' >";
+            zContent += "           <div class='float-md-end' > " + DateTimeToString(data[i].createdOn, "dd/MM/yy HH:mm") + "</div>";
+            zContent += "       </div>";
+            zContent += "   </div>";
+            zContent += "   <div class='row' >" + data[i].comment + "</div>";
+            zContent += "</li>";
+        }
+        zContent += "</ul>";
+        $("#Panel_ListComment").html(zContent);
+    }
+    function SendComment() {
+        var key = $("#Todo_TaskKey").val();
+        var zComment = $("#txtComment").val();
+
+        //$("#ListComment").append('<li><a href="#">New list item</a></li>');
+        var zWaiting = "";
+        zWaiting += "<div class='text-center'>";
+        zWaiting += "  <div class='spinner-border text-primary m-1' role='status'>";
+        zWaiting += "      <span class='sr-only'>Loading...</span>";
+        zWaiting += "   </div>";
+        zWaiting += "</div>";
+        $("#Waiting").html(zWaiting);
+
+        $.ajax({
+            method: "GET",
+            url: "/Tasks/API",
+            data: { "taskKey": key, "comment": zComment }
+        })
+            .done(function (data) {
+                var zContent = "";
+                zContent += "<li class='list-group-item'>";
+                zContent += "   <div class='row' style = 'font-weight:bold;' >";
+                zContent += "       <div class='col-7' > " + data.employeeName + "</div>";
+                zContent += "       <div class='col-5' >";
+                zContent += "           <div class='float-md-end' > " + DateTimeToString(data.createdOn, "dd/MM/yy HH:mm") + "</div>";
+                zContent += "       </div>";
+                zContent += "   </div>";
+                zContent += "   <div class='row' >" + data.comment + "</div>";
+                zContent += "</li>";
+
+                $("#ListComment").append(zContent);
+                $("#Waiting").html("");
+            });
+    }
+
+
+</script>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            GetListComment();
+        });
+
+    </script>
+}
+

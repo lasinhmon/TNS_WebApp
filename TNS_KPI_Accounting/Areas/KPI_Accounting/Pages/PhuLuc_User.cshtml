@@ -1,0 +1,288 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.PhuLuc_UserModel
+@{
+}
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Accounting/Submenu" style="text-decoration:none; color:#4c4c4c">Kế toán</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Phụ Lục</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:22px; font-weight:bold">
+        KẾT QUẢ THỰC HIỆN HẬU KIỂM
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-10 text-center text-primary">
+        <div class="md-3">
+            <div class="input-group">
+                <input id="txt_UserID" type="text" class="form-control  w-auto" placeholder="User IPCAS">
+                <button class="btn btn-secondary" onclick="Modal_Selected_Ajax()">
+                    <i class="fas uil-users-alt"></i>
+                </button>
+                <select id="TypeView" class="form-select w-25">
+                    <option value="1">Hậu kiểm bút toán</option>
+                    <option value="2">Hậu kiểm không bút toán</option>
+                </select>
+                <select id="MonthView" class="form-select w-auto">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <select id="YearView" class="form-select w-auto">
+                    @for (int i = 2020; i < 2025; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <button class="btn btn-primary" onclick="btn_Search_Click()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-2 text-end">
+        <button id="btn_OptionView" class="btn btn-success" onclick="LV_OptionView()">All</button>
+    </div>
+</div>
+<div style="width:100%;">
+    <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+        <thead id="LV_DataHeader">
+        </thead>
+
+        <tbody id="LV_DataBody">
+        </tbody>
+
+    </table>
+
+
+    <div id="LV_Waiting" style="display:none">
+        <div class='text-center'>
+            <div class='spinner-border text-primary m-5' role='status'>
+                <span class='sr-only'>Loading...</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+
+<div id="Modal_Area">
+
+    <div class="modal fade" id="Modal_Selected_Form" tabindex="-1" aria-labelledby="Modal_Selected_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Selected_Title">Chọn nhân viên </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Selected_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Selected_lbl_ItemIndex"></div>
+                            <div id="Modal_Selected_lbl_ItemKey"></div>
+                            <div id="Modal_Selected_lbl_UnitKey"></div>
+                        </div>
+
+                    </div>
+                    <div id="Modal_Selected_Panel"></div>
+                    <div id="Modal_Selected_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#MonthView option')[5].selected = true;
+        $('#YearView option')[3].selected = true;
+        //LV_LoadData_Ajax();
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+
+</script>
+
+<script>
+    var _Data;
+    var _Status_View = "All";
+    function btn_Search_Click() {
+
+        LV_LoadData_Ajax();
+    }
+
+    function LV_LoadData_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+
+        var zUserID = $("#txt_UserID").val();
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+
+        var zDataRequest = { "userID": zUserID, "monthView": zMonthView, "yearView": zYearView };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/PhuLuc_User?handler=LoadData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                _Data = dataResponse;
+                LV_DisplayData();
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_DisplayData() {
+        var zContent = "";
+        var zHeader = "";
+        var zStyle_RecordView = "";
+
+        if (_Data.info.name == "ERROR") {
+            $("#txt_MessageLog").html(_Data.info.name);
+        }
+        else {
+            var k = 0;
+            k = _Data.fieldsName.length;
+            zHeader += "<tr style='cursor:pointer'>";
+            zHeader += "    <th class='text-center text-light bg-primary align-middle'> STT </th>";
+            for (i = 0; i < k; i++) {
+                zHeader += "    <th class='text-center text-light bg-primary align-middle'> " + _Data.fieldsName[i] + "</th>";
+            }
+            zHeader += "</tr>";
+            $("#LV_DataHeader").html(zHeader);
+
+            var n = _Data.dataOfTable.length;
+            var zView = 0;
+            for (i = 0; i < n; i++) {
+                if (_Status_View == "All") {
+                    zView = 1;
+                }
+                else {
+
+                    if (_Data.dataOfTable[i][4] == 0 && _Data.dataOfTable[i][5] == 0)
+                        zView = 0;
+                    else
+                        zView = 1;
+                }
+                if (zView == 1) {
+                    zContent += "       <tr style='cursor:pointer'>";
+                    zContent += "           <td style='" + zStyle_RecordView + "'>";
+                    zContent += "               <div> " + (i + 1) + " </div>";
+                    zContent += "           </td>";
+                    for (j = 0; j < k; j++) {
+                        zContent += "           <td style='" + zStyle_RecordView + "'>" + _Data.dataOfTable[i][j] + "</td>";
+                    }
+                    zContent += "       </tr>";
+                }
+            }
+
+            $("#LV_DataBody").html(zContent);
+
+        }
+    }
+
+    function LV_OptionView() {
+        if ($("#btn_OptionView").text() == "All") {
+            _Status_View = "Short";
+            $("#btn_OptionView").text("Short");
+        }
+        else {
+            _Status_View = "All";
+            $("#btn_OptionView").text("All");
+        }
+
+        LV_DisplayData()
+    }
+
+</script>
+
+<script>
+    function Modal_Selected_Ajax() {
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+        var zDataRequest = { "monthView": zMonthView, "yearView": zYearView };
+
+        $("#Modal_Selected_Title").text("Chọn nhân viên xem trong " + zMonthView + "-" + zYearView);
+        $("#Modal_Selected_Form").modal('show');
+        $("#Modal_Selected_Waiting").css("display", "");
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/PhuLuc_User?handler=CollectData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                Modal_DisplayData(dataResponse);
+                $("#Modal_Selected_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function Modal_DisplayData(dataview) {
+        var zStyle_RecordView = "";
+        //$("#Modal_Selected_Panel").html(JSON.stringify(dataview));
+        var n = dataview.length;
+        var zContent = "";
+        for (i = 1; i < n; i++) {
+            zContent += "<div class='row'>";
+            zContent += "   <div class='col-12'>";
+            zContent += "       <div class='input-group mb-2'>";
+            zContent += "           <span class='input-group-text' style='width:120px'> " + dataview[i][0] + "</span>";
+            zContent += "           <input type='text' class='form-control' value='" + dataview[i][2] + "' aria-label='' aria-describedby='button-addon2' > ";
+            zContent += "           <button class='btn btn-primary' onclick='Modal_btn_Click(\"" + dataview[i][0] + "\")'><i class='uil-eye'> </i> </button>";
+            zContent += "       </div>";
+            zContent += "  </div>";
+            zContent += "</div>";
+        }
+        $("#Modal_Selected_Panel").html(zContent);
+    }
+
+    function Modal_btn_Click(ID) {
+
+        $("#txt_UserID").val(ID);
+        $("#Modal_Selected_Form").modal('hide');
+    }
+</script>

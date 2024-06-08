@@ -1,0 +1,519 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.Personal_ChartModel
+@{
+}
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Accounting/Submenu" style="text-decoration:none; color:#4c4c4c">Kế toán</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Report</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:22px; font-weight:bold">
+        KPI CỦA NHÂN VIÊN KẾ TOÁN
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-2 text-end">
+    </div>
+    <div class="col-8 text-center text-primary">
+        <div class="md-3">
+            <div class="input-group">
+                <input id="txt_UserID" type="text" class="form-control w-auto" placeholder="User IPCAS">
+                <button class="btn btn-secondary" onclick="Modal_Selected_Ajax()">
+                    ...
+                </button>
+                <select id="MonthView" class="form-select w-auto">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <select id="YearView" class="form-select w-auto">
+                    @for (int i = 2020; i < 2025; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <button id="btn_Search" class="btn btn-primary" onclick="LoadDataInfo_Ajax()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-2 text-end">
+    </div>
+</div>
+
+<div style="height:30px"></div>
+<div id="LV_Waiting" style="display:none">
+    <div class='text-center'>
+        <div class='spinner-border text-primary m-1' role='status'>
+            <span class='sr-only'>Loading...</span>
+        </div>
+        <div class="spinner-border text-secondary m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-success m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div id="ViewChart">
+    <div class="row">
+        <div class="col-3" style="height:200px">
+            <canvas id="Chart_Pie_TotalPersonal"></canvas>
+        </div>
+        <div class="col-3" style="height:200px">
+            <canvas id="Chart_Pie_DepartmentPersonal"></canvas>
+        </div>
+        <div class="col-3" style="height:200px">
+            <canvas id="Chart_Pie_Group"></canvas>
+        </div>
+        <div class="col-3" style="height:200px">
+           <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#13a200"></div>
+                <div class="col-9">#Cá nhân</div>
+           </div>
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#36a2eb"></div>
+                <div class="col-9">#Tổng bút toán</div>
+            </div>
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#ffcd56"></div>
+                <div class="col-9">#Tổng bút toán bộ phận</div>
+            </div>
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#ff6384"></div>
+                <div class="col-9">#Hậu kiểm bút toán</div>
+            </div>
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#848484"></div>
+                <div class="col-9">#Hậu kiểm ko bút toán</div>
+            </div>
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#008577"></div>
+                <div class="col-9">#Hậu kiểm bút toán PUB</div>
+            </div>
+            <div class="row" style="padding-bottom:5px">
+                <div class="col-3" style="background-color:#bac431"></div>
+                <div class="col-9">#Agritax</div>
+            </div>
+        </div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="row">
+        <div class="card">
+            <canvas id="Chart_Buttoan" height="250"></canvas>
+        </div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="row">
+        <div class="card">
+            <canvas id="Chart_Buttoan_Department" height="250"></canvas>
+        </div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="row">
+        <div class="card">
+            <canvas id="Chart_Buttoan_Group" height="350"></canvas>
+        </div>
+    </div>
+   
+
+</div>
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Selected_Form" tabindex="-1" aria-labelledby="Modal_Selected_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Selected_Title">Chọn nhân viên </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Selected_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Selected_lbl_ItemIndex"></div>
+                            <div id="Modal_Selected_lbl_ItemKey"></div>
+                            <div id="Modal_Selected_lbl_UnitKey"></div>
+                        </div>
+
+                    </div>
+                    <div id="Modal_Selected_Panel"></div>
+                    <div id="Modal_Selected_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/chart.js/chartjs.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    var _Labels = [
+        '1', '2', '3', '4','5', '6', '7', '8','9',
+        '10','11', '12', '13', '14', '15', '16', '17', '18', '19',
+        '20', '21', '122', '23', '24', '25', '26', '27', '28', '29',
+        '30','31'
+    ];
+    $(document).ready(function () {
+        $('#MonthView option')[5].selected = true;
+        $('#YearView option')[3].selected = true;
+
+       // Chart_Buttoan.height = 250;
+       // Chart_Buttoan_Group.height = 350;
+        LoadData_Ajax();
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+
+</script>
+<script>
+
+    function LoadData_Ajax() {
+
+        DisplayData("");
+    }
+    function DisplayData(dataview) {
+       
+        DisplayChart_Buttoan();
+        DisplayChart_Buttoan_Department();
+        DisplayChart_Buttoan_Group();
+        DisplayChart_Pie_TotalPersonal();
+        DisplayChart_Pie_DepartmentPersonal();
+        DisplayChart_Pie_Group();
+    }
+</script>
+
+<script>
+    var _Data_Buttoan_Total = [];
+    var _Data_Buttoan_Staff = [];
+    var Chart_Buttoan = new Chart(document.getElementById('Chart_Buttoan'), {
+        type: 'bar',
+        data: {
+            labels: _Labels,
+            datasets: [{
+                label: '# Tổng bút toán',
+                data: _Data_Buttoan_Total,
+                backgroundColor: '#36a2eb',
+                borderWidth: 1
+            },
+            {
+                label: '# Bút toán nhân viên',
+                data: _Data_Buttoan_Staff,
+                backgroundColor:'#13a200',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'THỐNG KÊ THEO BÚT TOÁN',
+                    padding: {
+                        top: 5,
+                        bottom: 5
+                    }
+                }
+            }
+        }
+    });
+    function DisplayChart_Buttoan() {
+        for (i = 0; i < 31; i++) {
+            _Data_Buttoan_Total[i] = Math.floor(Math.random() * 100);
+            _Data_Buttoan_Staff[i] = Math.floor(Math.random() * 30);
+            if (_Data_Buttoan_Staff[i] > _Data_Buttoan_Total[i])
+            {
+                _Data_Buttoan_Staff[i] = _Data_Buttoan_Total[i];
+            }
+        }
+        for(k=5;k<31;k=k+7)
+        {        
+            _Data_Buttoan_Total[k] = 0;
+            _Data_Buttoan_Staff[k] = 0;
+            _Data_Buttoan_Total[k+1] = 0;
+            _Data_Buttoan_Staff[k+1] = 0;
+        }
+      
+
+        Chart_Buttoan.data.datasets[0].data = _Data_Buttoan_Total;
+        Chart_Buttoan.data.datasets[1].data = _Data_Buttoan_Staff;
+        Chart_Buttoan.update();
+
+    }
+</script>
+<script>
+    var _Data_Buttoan_Department = [];
+    var Chart_Buttoan_Department = new Chart(document.getElementById('Chart_Buttoan_Department'), {
+        type: 'bar',
+        data: {
+            labels: _Labels,
+            datasets: [{
+                label: '# Tổng bút toán bộ phận',
+                data: _Data_Buttoan_Department,
+                backgroundColor: '#ffcd56',
+                borderWidth: 1
+            },
+            {
+                label: '# Bút toán nhân viên',
+                data: _Data_Buttoan_Staff,
+                backgroundColor: '#13a200',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'THỐNG KÊ THEO BÚT TOÁN',
+                    padding: {
+                        top: 5,
+                        bottom: 5
+                    }
+                }
+            }
+        }
+    });
+    function DisplayChart_Buttoan_Department() {
+        for (i = 0; i < 31; i++) {
+            _Data_Buttoan_Department[i] = Math.floor(Math.random() * 100);
+            
+        }
+        for (k = 5; k < 31; k = k + 7) {
+            _Data_Buttoan_Department[k] = 0;
+            _Data_Buttoan_Department[k + 1] = 0;
+        }
+        
+        Chart_Buttoan_Department.data.datasets[0].data = _Data_Buttoan_Department;
+        Chart_Buttoan_Department.data.datasets[1].data = _Data_Buttoan_Staff;
+        Chart_Buttoan_Department.update();
+       
+    }
+</script>
+<script>
+    var _Data_Buttoan_HKBT = [];
+    var _Data_Buttoan_HKBT_None = [];
+    var _Data_Buttoan_HKBT_PHUB = [];
+    var _Data_Buttoan_Agritax = [];
+  
+    var Chart_Buttoan_Group = new Chart(document.getElementById('Chart_Buttoan_Group'), {
+        type: 'line',
+        data: {
+            labels: _Labels,
+            datasets: [{
+                label: '# Hậu kiểm bút toán',
+                data: _Data_Buttoan_Total,
+                backgroundColor: '#ff6384',
+                borderColor: '#ff6384',
+                borderWidth: 1,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4
+            },
+            {
+                label: '# Hậu kiểm không bút toán',
+                data: _Data_Buttoan_Staff,
+                backgroundColor: '#848484',
+                borderColor: '#848484',
+                borderWidth: 1,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4
+            },
+            {
+                label: '# Hậu kiểm bút toán PHUB',
+                data: _Data_Buttoan_Staff,
+                backgroundColor: '#008577',
+                borderColor: '#008577',
+                borderWidth: 1,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4
+            },
+            {
+                label: '# Bút toán Agritax',
+                backgroundColor: '#bac431',
+                borderColor: '#bac431',
+                data: _Data_Buttoan_Staff,
+                borderWidth: 1,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4
+            }
+          ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'THỐNG KÊ THEO BÚT TOÁN TỪNG NHÓM',
+                    padding: {
+                        top: 5,
+                        bottom: 5
+                    }
+                }
+            }, 
+            bezierCurve: false
+        }
+    });
+
+    function DisplayChart_Buttoan_Group() {
+        for (i = 0; i < 31; i++) {
+            _Data_Buttoan_HKBT[i] = Math.floor(Math.random() * 100);
+            _Data_Buttoan_HKBT_None[i] = Math.floor(Math.random() * 100);
+            _Data_Buttoan_HKBT_PHUB[i] = Math.floor(Math.random() * 100);
+            _Data_Buttoan_Agritax[i] = Math.floor(Math.random() * 100);
+        }
+        for (k = 5; k < 31; k = k + 7) {
+            _Data_Buttoan_HKBT[k] = 0;
+            _Data_Buttoan_HKBT_None[k] = 0;
+            _Data_Buttoan_HKBT_PHUB[k] = 0;
+            _Data_Buttoan_Agritax[k] = 0;
+
+            _Data_Buttoan_HKBT[k + 1] = 0;
+            _Data_Buttoan_HKBT_None[k + 1] = 0;
+            _Data_Buttoan_HKBT_PHUB[k + 1] = 0;
+            _Data_Buttoan_Agritax[k + 1] = 0;
+        }
+
+        Chart_Buttoan_Group.data.datasets[0].data = _Data_Buttoan_HKBT;
+        Chart_Buttoan_Group.data.datasets[1].data = _Data_Buttoan_HKBT_None;
+        Chart_Buttoan_Group.data.datasets[2].data = _Data_Buttoan_HKBT_PHUB;
+        Chart_Buttoan_Group.data.datasets[3].data = _Data_Buttoan_Agritax;
+        Chart_Buttoan_Group.update();
+
+    }
+</script>
+
+<script>
+   
+    function DisplayChart_Pie_TotalPersonal() {
+        var Chart_Pie_TotalPersonal = new Chart(document.getElementById('Chart_Pie_TotalPersonal'), {
+            type: 'pie',
+            data: {
+                datasets: [{ data: [200, 30], backgroundColor: ['#36a2eb', '#13a200'] }]
+                
+            },
+            options: {
+            }
+        });
+    }
+    function DisplayChart_Pie_DepartmentPersonal() {
+        var Chart_Pie_DepartmentPersonal = new Chart(document.getElementById('Chart_Pie_DepartmentPersonal'), {
+            type: 'pie',
+            data: {
+                datasets: [{ data: [200, 80], backgroundColor: ['#ffcd56', '#13a200'] }]
+            },
+            options: {
+            }
+        });
+    }
+    function DisplayChart_Pie_Group() {
+        var Chart_Pie_Group = new Chart(document.getElementById('Chart_Pie_Group'), {
+            type: 'pie',
+            data: {
+
+                datasets: [{ data: [60, 80, 50, 70], backgroundColor: ['#ff6384', '#848484', '#008577', '#bac431'] }]
+            },
+            options: {
+                plugins: {
+                    datalabels: {
+                        display: false,
+                    },
+                }
+            }
+        });
+    }
+</script>
+<script>
+    function Modal_Selected_Ajax() {
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+        var zDataRequest = { "monthView": zMonthView, "yearView": zYearView };
+
+        $("#Modal_Selected_Title").text("Chọn nhân viên xem trong " + zMonthView + "-" + zYearView);
+        $("#Modal_Selected_Form").modal('show');
+        $("#Modal_Selected_Waiting").css("display", "");
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/Personal?handler=CollectData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                Modal_DisplayData(dataResponse);
+                $("#Modal_Selected_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function Modal_DisplayData(dataview) {
+        var zStyle_RecordView = "";
+        //$("#Modal_Selected_Panel").html(JSON.stringify(dataview));
+        var n = dataview.length;
+        var zContent = "";
+        for (i = 1; i < n; i++) {
+            zContent += "<div class='row'>";
+            zContent += "   <div class='col-12'>";
+            zContent += "       <div class='input-group mb-2'>";
+            zContent += "           <span class='input-group-text' style='width:120px'> " + dataview[i][0] + "</span>";
+            zContent += "           <input type='text' class='form-control' value='" + dataview[i][2] + "' aria-label='' aria-describedby='button-addon2' > ";
+            zContent += "           <button class='btn btn-primary' onclick='Modal_btn_Click(\"" + dataview[i][0] + "\")'><i class='uil-eye'> </i> </button>";
+            zContent += "       </div>";
+            zContent += "  </div>";
+            zContent += "</div>";
+        }
+        $("#Modal_Selected_Panel").html(zContent);
+    }
+    function Modal_btn_Click(ID) {
+
+        $("#txt_UserID").val(ID);
+        $("#Modal_Selected_Form").modal('hide');
+    }
+</script>

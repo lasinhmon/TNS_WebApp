@@ -1,0 +1,70 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.UploadFileModel
+@{
+    Layout = "";
+    var i = 1;
+}
+<!-- dropzone css -->
+<link href="~/layouts/minible/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+<link rel="shortcut icon" href="~/layouts/minible/images/favicon.ico">
+<!-- Bootstrap Css -->
+<link href="~/layouts/minible/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+<!-- Icons Css -->
+<link href="~/layouts/minible/css/icons.min.css" rel="stylesheet" type="text/css" />
+<!-- App Css-->
+<link href="~/layouts/minible/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+<link href="~/css/site.css" rel="stylesheet" />
+
+
+<div class="row">
+    <form method="post" >
+        <table id="datatable-grid" class="table" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:14px;">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width:100px">STT</th>
+                    <th class="text-center">Tên File</th>
+                    <th class="text-center" style="width:220px">Dung lượng</th>
+                    <th class="text-center" style="width:220px">Ngày Upload</th>
+                    <th class="text-center" style="width:80px"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (TNS_Task.Areas.Tasks.Models.FileAttack_Record zItem in Model.ListFileAttack)
+                {
+
+                    <tr>
+                        <td class="text-center">@(i++)<input hidden asp-for="@Model.TaskKey" /></td>
+                        <td><a href="@zItem.FilePath" style="color:#232323"> @zItem.FileName</a></td>
+                        <td class="text-end">@zItem.FileSize @zItem.FileSizeUnit</td>
+                        <td class="text-center">@zItem.CreatedOn.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td><button type="submit" asp-action="DeleteItem" asp-route-key="@zItem.EntryKey" class="btn btn-outline-secondary btn-sm edit"><i class="uil uil-trash-alt font-size-18"></i></button></td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </form>
+</div>
+<div class="row">
+    <form asp-action="UploadFile" class="dropzone">
+        <div> <input hidden asp-for="@Model.TaskKey" /> </div>
+        <div class="fallback">
+            <input name="file" type="file" multiple="multiple">
+        </div>
+        <div class="dz-message needsclick">
+            <div class="mb-3">
+                <i class="display-4 text-muted mdi mdi-cloud-upload"></i>
+            </div>
+
+            <h5>Import Files</h5>
+        </div>
+    </form>
+</div>
+<div style="height:100px"></div>
+
+<!-- dropzone plugin -->
+<script src="~/layouts/minible/libs/dropzone/min/dropzone.min.js"></script>
+
+<!-- file-manager js -->
+<script src="~/layouts/minible/js/pages/file-manager.init.js"></script>

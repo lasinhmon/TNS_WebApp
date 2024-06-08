@@ -1,0 +1,512 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TaskNewModel
+
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/Tasks/TaskList" style="text-decoration:none; color:#4c4c4c">Công việc</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Tạo mới công việc</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+
+            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#Info" role="tab">
+                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                        <span class="d-none d-sm-block"><b>Thông tin</b></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#fileAttack" role="tab">
+                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                        <span class="d-none d-sm-block"><b>File đính kèm</b></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#SharedToUsers" role="tab">
+                        <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                        <span class="d-none d-sm-block"><b>Chia sẽ</b></span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content p-3 text-muted bg-body" style="border-left:solid 1px #dee2e6;border-right:solid 1px #dee2e6;border-bottom:solid 1px #dee2e6">
+                <div class="tab-pane active" id="Info" role="tabpanel">              
+                    <table style="width:100%;" >
+                        <tr>
+                            <td style="width:140px; color:#161616; padding:4px;">Công việc</td>
+                            <td colspan="5">
+                                <input class="form-control" type="text" style="background-color:#f6fffe">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:140px; color:#161616; padding:4px;">Ngày bắt đầu</td>
+                            <td style="width:200px; display: block; padding:4px; ">
+                                <input class="form-control" type="datetime-local" style="background-color:#f6fffe">
+
+                            </td>
+                            <td style="width:140px; color:#161616; padding:4px;">Deadline</td>
+                            <td style="width:200px; display: block; padding:4px; ">
+                                <input class="form-control" type="datetime-local" style="background-color:#f6fffe">
+                            </td>
+                            <td style="width:140px; color:#161616; padding:4px;">Ngày hoàn thành</td>
+                            <td style="width:200px; display: block; padding:4px; ">
+                                <input class="form-control" type="datetime-local" style="background-color:#f6fffe">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:140px; color:#161616; padding:4px;">Mức độ</td>
+                            <td style="width:200px; display: block; padding:4px; ">
+                                <select class="form-select w-sm" style="background-color:#f6fffe">
+                                    @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoPriorities)
+                                    {
+                                        <option value="@zItem.Value">@zItem.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <td style="width:140px; color:#161616; padding:4px;">Tình trạng</td>
+                            <td style="width:200px; display: block; padding:4px; ">
+                                <select class="form-select w-sm" style="background-color:#f6fffe">
+                                    @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoStatus)
+                                    {
+                                        <option value="@zItem.Value">@zItem.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <td style="width:140px; color:#161616; padding:4px;">Tiến độ</td>
+                            <td style="width:200px; display: block; padding:4px; ">
+                                <select class="form-select w-sm" style="background-color:#f6fffe">
+                                    <option value="00">00%</option>
+                                    <option value="10">10%</option>
+                                    <option value="20">20%</option>
+                                    <option value="30">30%</option>
+                                    <option value="40">40%</option>
+                                    <option value="50">50%</option>
+                                    <option value="60">60%</option>
+                                    <option value="70">70%</option>
+                                    <option value="80">80%</option>
+                                    <option value="90">90%</option>
+                                    <option value="100">100%</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="mb-3 row">
+                        <div class="card-body">
+                            <textarea id="classic-editor" ></textarea>
+                        </div>
+
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-rounded waves-effect waves-light">Cập nhật</button>
+                        <button type="submit" class="btn btn-primary btn-rounded waves-effect waves-light">Cập nhật & Quay lại</button>
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="fileAttack" role="tabpanel">
+                    <table class="table align-middle table-nowrap table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Date modified</th>
+                                <th scope="col">Size</th>
+                                <th scope="col" ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-file-document font-size-20 align-middle text-primary me-2"></i> index.html</a></td>
+                                <td>12-10-2021</td>
+                                <td>09 KB</td>
+                           
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-folder-zip font-size-20 align-middle text-warning me-2"></i> Project-A.zip</a></td>
+                                <td>11-10-2021</td>
+                                <td>115 KB</td>
+                            
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-image font-size-20 align-middle text-muted me-2"></i> Img-1.jpeg</a></td>
+                                <td>11-10-2021</td>
+                                <td>86 KB</td>
+                             
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-text-box font-size-20 align-middle text-muted me-2"></i> update list.txt</a></td>
+                                <td>10-10-2021</td>
+                                <td>08 KB</td>
+                             
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-folder font-size-20 align-middle text-warning me-2"></i> Project B</a></td>
+                                <td>10-10-2021</td>
+                                <td>72 KB</td>
+                              
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-text-box font-size-20 align-middle text-muted me-2"></i> Changes list.txt</a></td>
+                                <td>09-10-2021</td>
+                                <td>07 KB</td>
+                            
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-image font-size-20 align-middle text-success me-2"></i> Img-2.png</a></td>
+                                <td>09-10-2021</td>
+                                <td>31 KB</td>
+                            
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="mdi mdi-folder font-size-20 align-middle text-warning me-2"></i> Project C</a></td>
+                                <td>09-10-2021</td>
+                                <td>20 KB</td>
+                               
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="javascript: void(0);" class="text-dark  fw-medium"><i class="bx bxs-file font-size-20 align-middle text-primary me-2"></i> starter-page.html</a></td>
+                                <td>08-10-2021</td>
+                                <td>11 KB</td>
+                         
+                                <td>
+                                    <div class="dropdown">
+                                        <a class="font-size-16 text-muted" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Open</a>
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Rename</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="SharedToUsers" role="tabpanel">
+                    <div class="table-responsive mb-4">
+                        <table class="table table-centered table-nowrap mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 50px;">
+                                        <div class="form-check font-size-16">
+                                            <input type="checkbox" class="form-check-input" id="contacusercheck">
+                                            <label class="form-check-label" for="contacusercheck"></label>
+                                        </div>
+                                    </th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Position</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col" style="width: 200px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">
+                                        <div class="form-check font-size-16">
+                                            <input type="checkbox" class="form-check-input" id="contacusercheck1">
+                                            <label class="form-check-label" for="contacusercheck1"></label>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <img src="/images/avatar/avatar-2.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                        <a href="#" class="text-body">Simon Ryles</a>
+                                    </td>
+                                    <td>Full Stack Developer</td>
+                                    <td>SimonRyles@minible.com</td>
+                                    <td>
+                                        <ul class="list-inline mb-0">
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-primary"><i class="uil uil-pen font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-danger"><i class="uil uil-trash-alt font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item dropdown">
+                                                <a class="text-muted dropdown-toggle font-size-18 px-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                                    <i class="uil uil-ellipsis-v"></i>
+                                                </a>
+
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Action</a>
+                                                    <a class="dropdown-item" href="#">Another action</a>
+                                                    <a class="dropdown-item" href="#">Something else here</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <div class="form-check font-size-16">
+                                            <input type="checkbox" class="form-check-input" id="contacusercheck2">
+                                            <label class="form-check-label" for="contacusercheck2"></label>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <img src="/images/avatar/avatar-3.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                        <a href="#" class="text-body">Marion Walker</a>
+                                    </td>
+                                    <td>Frontend Developer</td>
+                                    <td>MarionWalker@minible.com</td>
+                                    <td>
+                                        <ul class="list-inline mb-0">
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-primary"><i class="uil uil-pen font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-danger"><i class="uil uil-trash-alt font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item dropdown">
+                                                <a class="text-muted dropdown-toggle font-size-18 px-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                                    <i class="uil uil-ellipsis-v"></i>
+                                                </a>
+
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Action</a>
+                                                    <a class="dropdown-item" href="#">Another action</a>
+                                                    <a class="dropdown-item" href="#">Something else here</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <div class="form-check font-size-16">
+                                            <input type="checkbox" class="form-check-input" id="contacusercheck3">
+                                            <label class="form-check-label" for="contacusercheck3"></label>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <div class="avatar-xs d-inline-block me-2">
+                                            <div class="avatar-title bg-primary-subtle rounded-circle text-primary">
+                                                <i class="mdi mdi-account-circle m-0"></i>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="text-body">Frederick White</a>
+                                    </td>
+                                    <td>UI/UX Designer</td>
+                                    <td>FrederickWhite@minible.com</td>
+                                    <td>
+                                        <ul class="list-inline mb-0">
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-primary"><i class="uil uil-pen font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-danger"><i class="uil uil-trash-alt font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item dropdown">
+                                                <a class="text-muted dropdown-toggle font-size-18 px-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                                    <i class="uil uil-ellipsis-v"></i>
+                                                </a>
+
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Action</a>
+                                                    <a class="dropdown-item" href="#">Another action</a>
+                                                    <a class="dropdown-item" href="#">Something else here</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">
+                                        <div class="form-check font-size-16">
+                                            <input type="checkbox" class="form-check-input" id="contacusercheck4">
+                                            <label class="form-check-label" for="contacusercheck4"></label>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <img src="/images/avatar/avatar-4.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                        <a href="#" class="text-body">Shanon Marvin</a>
+                                    </td>
+                                    <td>Backend Developer</td>
+                                    <td>ShanonMarvin@minible.com</td>
+                                    <td>
+                                        <ul class="list-inline mb-0">
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-primary"><i class="uil uil-pen font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="javascript:void(0);" class="px-2 text-danger"><i class="uil uil-trash-alt font-size-18"></i></a>
+                                            </li>
+                                            <li class="list-inline-item dropdown">
+                                                <a class="text-muted dropdown-toggle font-size-18 px-2" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                                    <i class="uil uil-ellipsis-v"></i>
+                                                </a>
+
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Action</a>
+                                                    <a class="dropdown-item" href="#">Another action</a>
+                                                    <a class="dropdown-item" href="#">Something else here</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                             
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ckeditor -->
+<script src="~/libs/@@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+
+<script>
+    ClassicEditor
+        .create(document.querySelector('#classic-editor'))
+        .catch(error => {
+            alert(error);
+            console.error(error);
+        });
+</script>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+        });
+
+    </script>
+}
+

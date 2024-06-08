@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="FileUploadService\**" />
+    <Content Remove="FileUploadService\**" />
+    <EmbeddedResource Remove="FileUploadService\**" />
+    <None Remove="FileUploadService\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\libs\sidebars\sidebars.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TNS.DBConnection\TNS.DBConnection.csproj" />
+    <ProjectReference Include="..\TNS_KPI_Accounting\TNS_KPI_Accounting.csproj" />
+    <ProjectReference Include="..\TNS_KPI_BankAccount\TNS_KPI_BankAccount.csproj" />
+    <ProjectReference Include="..\TNS_KPI_Debit\TNS_KPI_Debit.csproj" />
+    <ProjectReference Include="..\TNS_KPI_Service\TNS_KPI_Service.csproj" />
+    <ProjectReference Include="..\TNS_Task\TNS_Task.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TNS.Auth">
+      <HintPath>..\DLL\TNS.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="TNS_Employee">
+      <HintPath>..\DLL\TNS_Employee.dll</HintPath>
+    </Reference> 
+    <Reference Include="TNS_KPI_Plan">
+      <HintPath>..\DLL\TNS_KPI_Plan.dll</HintPath>
+    </Reference>
+    <Reference Include="TNS_Notice">
+      <HintPath>..\DLL\TNS_Notice.dll</HintPath>
+    </Reference>
+    <Reference Include="TNS_Sample">
+      <HintPath>..\DLL\TNS_Sample.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

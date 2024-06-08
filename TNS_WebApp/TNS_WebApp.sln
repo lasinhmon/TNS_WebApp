@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS_WebApp", "TNS_WebApp.csproj", "{8F5DE04F-1E24-4BA6-90B6-FB41C4EAEBBF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS.DBConnection", "..\TNS.DBConnection\TNS.DBConnection.csproj", "{908CE553-EC05-4865-A6C5-8F8E38EF2308}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS_Task", "..\TNS_Task\TNS_Task.csproj", "{1B44307D-251E-4F05-BC56-FF5141FD0701}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS_KPI_Accounting", "..\TNS_KPI_Accounting\TNS_KPI_Accounting.csproj", "{9DE6B923-056B-4F77-AB5B-3017C43F6A28}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS_KPI_Service", "..\TNS_KPI_Service\TNS_KPI_Service.csproj", "{002A7193-AA69-4A49-B9EF-8C5A6E4529B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS_KPI_BankAccount", "..\TNS_KPI_BankAccount\TNS_KPI_BankAccount.csproj", "{DF273D7F-2F92-4478-85E6-5E65F631B50A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNS_KPI_Debit", "..\TNS_KPI_Debit\TNS_KPI_Debit.csproj", "{CE359F18-3E96-4DD7-A2AE-B33F62B15A01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F5DE04F-1E24-4BA6-90B6-FB41C4EAEBBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F5DE04F-1E24-4BA6-90B6-FB41C4EAEBBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F5DE04F-1E24-4BA6-90B6-FB41C4EAEBBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F5DE04F-1E24-4BA6-90B6-FB41C4EAEBBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{908CE553-EC05-4865-A6C5-8F8E38EF2308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{908CE553-EC05-4865-A6C5-8F8E38EF2308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{908CE553-EC05-4865-A6C5-8F8E38EF2308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{908CE553-EC05-4865-A6C5-8F8E38EF2308}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B44307D-251E-4F05-BC56-FF5141FD0701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B44307D-251E-4F05-BC56-FF5141FD0701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B44307D-251E-4F05-BC56-FF5141FD0701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B44307D-251E-4F05-BC56-FF5141FD0701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DE6B923-056B-4F77-AB5B-3017C43F6A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE6B923-056B-4F77-AB5B-3017C43F6A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE6B923-056B-4F77-AB5B-3017C43F6A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE6B923-056B-4F77-AB5B-3017C43F6A28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{002A7193-AA69-4A49-B9EF-8C5A6E4529B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{002A7193-AA69-4A49-B9EF-8C5A6E4529B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{002A7193-AA69-4A49-B9EF-8C5A6E4529B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{002A7193-AA69-4A49-B9EF-8C5A6E4529B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF273D7F-2F92-4478-85E6-5E65F631B50A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF273D7F-2F92-4478-85E6-5E65F631B50A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF273D7F-2F92-4478-85E6-5E65F631B50A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF273D7F-2F92-4478-85E6-5E65F631B50A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE359F18-3E96-4DD7-A2AE-B33F62B15A01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE359F18-3E96-4DD7-A2AE-B33F62B15A01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE359F18-3E96-4DD7-A2AE-B33F62B15A01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE359F18-3E96-4DD7-A2AE-B33F62B15A01}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B898691F-9DC5-4B0B-87EE-837C1485D5DC}
+	EndGlobalSection
+EndGlobal

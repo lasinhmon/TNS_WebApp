@@ -1,0 +1,28 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.DefaultModel
+@{
+}
+<div style="height:300px"></div>
+<div><input id="Min" value="5" /></div>
+<div><input id="Max" value="100" /></div>
+<div id="lblRandomNumber"></div>
+<button onclick="RandomNumber()"> Apply</button>
+<script>
+    function RandomNumber() {
+        var min = $("#Min").val();
+        var max = $("#Max").val();
+        
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/Default?handler=RandomNumber",
+            data: JSON.stringify({ Min: min, Max: max }),
+            contentType: "application/json",
+            dataType: "json",
+        }).done(function (data) {
+            $("#lblRandomNumber").text(data);
+        })
+            .fail(function (error) {
+                $("#lblRandomNumber").text(error.responseText);
+            });
+    }
+</script>

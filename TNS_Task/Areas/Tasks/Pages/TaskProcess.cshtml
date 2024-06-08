@@ -1,0 +1,407 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TaskProcessModel
+@{
+    var zPriorityIcon = "/images/Priority_" + @Model.Todo.PriorityKey.ToString() + ".png";
+
+    var zStartDate = "";
+    var zFinishDate = "";
+
+    if (@Model.Todo.StartDate != null)
+        zStartDate = @Model.Todo.StartDate.Value.ToString("dd/MM/yyyy HH:mm");
+    if (@Model.Todo.FinishDate != null)
+        zFinishDate = @Model.Todo.FinishDate.Value.ToString("dd/MM/yyyy HH:mm");
+}
+<div class="page-content">
+    <div class="row" style="margin-top:-26px">
+        <div><a style="color:#af0b35; font-size:15px; font-weight:bold" href="~/Tasks/TaskShared"><img src="~/images/return-88.png" style="width:24px" /> Quay lại</a></div>
+    </div>
+    <div class="container-fluid">
+        <!-- start page title -->
+        <div class="row" style="padding-top:20px">
+            <h4 class="mb-0 text-primary">NỘI DUNG CÔNG VIỆC</h4>
+        </div>
+
+        <!-- end page title -->
+        <div class="row mb-4">
+            <div class="col-xl-8">
+                <div class="card border border-primary">
+                    <div class="card-header bg-transparent border-primary">
+                        <div style="float:left; max-width:600px"><h5 class="my-0 text-primary"><i class="uil-clipboard-notes me-3"></i>@Model.Todo.Subject</h5> </div>
+                        <div style="float:right">
+                            <div class="flex-shrink-0 me-3">
+                                <img src="@Model.OwnerInfo[1]" class="rounded" width="40px" alt="user-pic" title="@Model.Todo.OwnerName" style="margin:-10px;">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-body">
+                        <div> <input hidden asp-for="@Model.Todo.TaskKey" /> </div>
+                        <div class="row mb-2">
+
+                            <div class="col-md-2">Mức độ</div>
+                            <div class="col-md-4"> <img src="@zPriorityIcon"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Bắt đầu</div>
+                            <div class="col-md-4"><b>@zStartDate</b></div>
+                            <div class="col-md-2">Hoàn thành</div>
+                            <div class="col-md-4"><b>@zFinishDate</b></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">Tình trạng</div>
+                            @if (Model.UserLogin.Role.IsEdit)
+                            {
+                                <div class="col-md-4" style="cursor:pointer" onclick="Status_UpdateView()"><b>@Model.Todo.StatusName</b></div>
+                                <div class="col-md-2"> Tiến độ</div>
+                                <div class="col-md-4" style="cursor:pointer" onclick="Status_UpdateView()"><b>@Model.Todo.Complete%</b></div>
+                            }
+                            else
+                            {
+                                <div class="col-md-4"><b>@Model.Todo.StatusName</b></div>
+                                <div class="col-md-2"> Tiến độ</div>
+                                <div class="col-md-4"><b>@Model.Todo.Complete%</b></div>
+                            }
+                        </div>
+
+
+                        <div class="row">@Html.Raw(@Model.Todo.TaskContent)</div>
+
+                    </div>
+                    <div style="background-color:azure;">
+                        <table style=" width:100%">
+                            <tr>
+                                <td>
+                                    <div class="avatar-group">
+                                        @foreach (TNS_Task.Areas.Tasks.Models.TaskShared_Record zItemRole in Model.SharedUsers)
+                                        {
+                                            <div class="avatar-group-item">
+                                                <img src="@zItemRole.PhotoPath" alt="@zItemRole.EmployeeName" title="@zItemRole.EmployeeName" class="rounded-circle avatar-xs">
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    @if (Model.UserLogin.Role.IsAdd)
+                                    {
+                                        <button class="btn btn-primary" onclick="Task_AddEdit()">Cập nhật mới</button>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div id="EmployeeResponse"></div>
+
+                <div class="card border border-secondary">
+                    <div class="card-header bg-transparent border-secondary">
+                        <h5 class="my-0 text-secondary"><i class="uil uil-chat-bubble-user me-3"></i>Nhận xét - trao đổi</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="position-relative">
+                                <input id="txtComment" type="text" class="form-control chat-input rounded" placeholder="Enter Message...">
+
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary chat-send w-md waves-effect waves-light" onclick="SendComment()"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
+                        </div>
+                    </div>
+                    <div id="Panel_ListComment" style="overflow-x: hidden;overflow-y: auto; width: auto; height: auto;">
+                        <div class="text-center">
+                            <div class="spinner-border text-secondary m-1" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Waiting">
+                    </div>
+
+
+                </div>
+                <div>@Model.Message</div>
+            </div>
+            <div class="col-xl-4">
+
+                <div class="card border border-success">
+                    <div class="card-header bg-transparent border-success">
+                        <h5 class="my-0 text-success"><i class="uil-books me-3"></i>File đính kèm</h5>
+                    </div>
+                    <div>
+                        <table id="datatable-grid" class="table" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:14px;">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                @foreach (TNS_Task.Areas.Tasks.Models.FileAttack_Record zItem in Model.ListFileAttack)
+                                {
+                                    <tr>
+                                        <td><a href="@zItem.FilePath" style="color:#232323"> <b> @zItem.FileName</b></a></td>
+                                        <td style="width:100px" class="text-end">@zItem.FileSize @zItem.FileSizeUnit</td>
+                                        <td style="width:110px" class="text-center">@zItem.CreatedOn.ToString("dd/MM/yyyy")</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+</div> <!-- container-fluid -->
+<div class="modal fade" id="Modal_StatusUpdate" tabindex="-1" aria-labelledby="ModalSharedUpdateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="Modal_StatusUpdate_txt_title">Cập nhật tình hình</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post">
+                <div class="modal-body">
+                    <div> <input hidden asp-for="@Model.Todo.TaskKey" /> </div>
+                    <div id="Modal_StatusUpdate_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="MModal_StatusUpdate_Body" class="mb-3 row" style="padding:10px">
+
+                        <div style="width:130px; color:#161616; font-weight:bold;padding:4px;">Tình trạng</div>
+                        <div>
+                            <select asp-for="@Model.Todo.StatusKey" class="form-select w-sm">
+                                @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoStatus)
+                                {
+                                    <option value="@zItem.Value">@zItem.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="@Model.Todo.StatusKey"></span>
+                        </div>
+                        <div style="width:130px; color:#161616; font-weight:bold;padding:4px;">Tiến độ</div>
+                        <div>
+                            <select asp-for="@Model.Todo.Complete" class="form-select w-sm">
+                                <option value="00">00%</option>
+                                <option value="10">10%</option>
+                                <option value="20">20%</option>
+                                <option value="30">30%</option>
+                                <option value="40">40%</option>
+                                <option value="50">50%</option>
+                                <option value="60">60%</option>
+                                <option value="70">70%</option>
+                                <option value="80">80%</option>
+                                <option value="90">90%</option>
+                                <option value="100">100%</option>
+                            </select>
+                            <span asp-validation-for="@Model.Todo.Complete"></span>
+                        </div>
+
+                    </div>
+                    <div id="Modal_SharedUpdate_Message" class="mb-3 row">
+                    </div>
+                </div>
+                <div class="modal-footer text-center">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="Modal_NewTask" tabindex="-1" aria-labelledby="NewTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cập nhật công việc theo yêu cầu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div></div>
+                <div class="mb-3 row">
+                    <label for="example-text-input" class="col-md-2 col-form-label">Công việc</label>
+                    <div class="col-md-10">
+                        <input class="form-control" type="text">
+
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="example-date-input" class="col-md-2 col-form-label">Bắt đầu</label>
+                    <div class="col-md-4">
+                        <input class="form-control" type="datetime-local">
+
+                    </div>
+                    <label for="example-date-input" class="col-md-2 col-form-label">Hoàn thành</label>
+                    <div class="col-md-4">
+                        <input class="form-control" type="datetime-local">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="example-text-input" class="col-md-2 col-form-label">Tình trạng</label>
+                    <div class="col-md-4">
+                        <select class="form-select w-sm">
+                            <option value="0">Chưa thực hiện</option>
+                            <option value="0">Đang thực hiện</option>
+                            <option value="0">Hoàn thành</option>
+                        </select>
+                    </div>
+                    <label for="example-text-input" class="col-md-2 col-form-label">%Tiến độ</label>
+                    <div class="col-md-4">
+
+                        <select class="form-select w-sm">
+                            <option value="00">00%</option>
+                            <option value="10">10%</option>
+                            <option value="20">20%</option>
+                            <option value="30">30%</option>
+                            <option value="40">40%</option>
+                            <option value="50">50%</option>
+                            <option value="60">60%</option>
+                            <option value="70">70%</option>
+                            <option value="80">80%</option>
+                            <option value="90">90%</option>
+                            <option value="100">100%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="card-body">
+                        <textarea style="width:100%; height:200px"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Task_Save()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div> <input hidden asp-for="@Model.EmployeeLoginKey" /> </div>
+<!-- ckeditor -->
+<script src="~/layouts/minible/libs/@@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+<!--tinymce js-->
+<script src="~/layouts/minible/libs/tinymce/tinymce.min.js"></script>
+
+<!-- init js -->
+<script src="~/layouts/minible/js/pages/form-editor.init.js"></script>
+
+<script>
+
+    function GetListComment() {
+        var key = $("#Todo_TaskKey").val();
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "commentGet", "taskKey": key }
+        }).done(function (dataResponse) {
+            ViewComment(dataResponse);
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+    var _CommentLenght = 0;
+    function ViewComment(data) {
+        var employeeKey = $("#EmployeeLoginKey").val();
+        var i = 0;
+        _CommentLenght = data.length;
+        var zHeight = (_CommentLenght - 1) * 120;
+        var zContent = "<div>";
+        zContent += "   <div class='chat-conversation py-3'>";
+        zContent += "       <ul id='ListComment' class='list-unstyled mb-0 chat-conversation-message px-3' style='height:" + zHeight + "px' data-simplebar>";
+        for (i = 1; i < _CommentLenght; i++) {
+            var zStyle = "";
+            if (data[i].employeeKey == employeeKey)
+                zStyle = "class='right' ";
+
+            zContent += "<li " + zStyle + ">";
+            zContent += "   <div class='conversation-list'>";
+            zContent += "       <div class='ctext-wrap'>";
+            zContent += "           <div class='ctext-wrap-content'>";
+            zContent += "               <h5 class='font-size-14 conversation-name'><span class='text-reset '>" + data[i].employeeName + "</span> <span class='d-inline-block font-size-12 text-muted ms-2'>" + DateTimeToString(data[i].createdOn, "dd/MM/yy HH:mm") + "</span></h5>";
+            zContent += "               <p class='mb-0'>  " + data[i].comment + " </p>";
+            zContent += "           </div>";
+            zContent += "       </div>";
+            zContent += "   </div>";
+            zContent += "</li>";
+        }
+        zContent += "       </ul>";
+        zContent += "   </div>";
+        zContent += "</div>";
+        $("#Panel_ListComment").html(zContent);
+    }
+    function SendComment() {
+        var key = $("#Todo_TaskKey").val();
+        var zComment = $("#txtComment").val();
+
+        //$("#ListComment").append('<li><a href="#">New list item</a></li>');
+        var zWaiting = "";
+        zWaiting += "<div class='text-center'>";
+        zWaiting += "  <div class='spinner-border text-primary m-1' role='status'>";
+        zWaiting += "      <span class='sr-only'>Loading...</span>";
+        zWaiting += "   </div>";
+        zWaiting += "</div>";
+        $("#Waiting").html(zWaiting);
+
+        $.ajax({
+            method: "GET",
+            url: "/Tasks/API",
+            data: { "cmd": "commentAdd", "taskKey": key, "comment": zComment }
+        })
+            .done(function (data) {
+                $("#Waiting").html("");
+            });
+        GetListComment();
+    }
+
+    function Status_UpdateView() {
+        $("#Modal_StatusUpdate").modal('show');
+    }
+
+    function Task_AddEdit() {
+        $("#Modal_NewTask").modal('show');
+    }
+    function Task_Save() {
+        $("#Modal_NewTask").modal('hide');
+        var zContentAdd = "";
+        zContentAdd += "<div class='card border border-success'>";
+        zContentAdd += "                <div class='card-header bg-success border-success'>";
+        zContentAdd += "                    <h5 class='my-0 text-light'><i class='uil-clipboard-notes me-3'>Đang thu thập hồ sơ tài chính </i></h5>";
+        zContentAdd += "                </div>";
+        zContentAdd += "                <div class='card-body'>";
+        zContentAdd += "   <div class='row mb-2'>";
+        zContentAdd += "                       <div class='col-md-2'>Bắt đầu</div>";
+        zContentAdd += "                        <div class='col-md-4'><b>09/15/2023</b></div>";
+        zContentAdd += "                        <div class='col-md-2'>Hoàn thành</div>";
+        zContentAdd += "                        <div class='col-md-4'><b>09/20/2023 </b></div>";
+        zContentAdd += "                    </div>";
+        zContentAdd += "                    <div class='row mb-2'>";
+        zContentAdd += "                        <div class='col-md-2'>Tình trạng</div>";
+        zContentAdd += "                        <div class='col-md-4'><b>Hoàn thành</b></div>";
+        zContentAdd += "                        <div class='col-md-2'> %Tiến độ</div>";
+        zContentAdd += "                        <div class='col-md-4'><b>100%</b></div>";
+        zContentAdd += "                    </div>";
+        zContentAdd += "                    <div class='row'> Đang xin cấp hồ sơ</div>";
+        zContentAdd += "                </div>";
+        zContentAdd += "               <div style='height:30px; background-color:azure; padding:5px; font-weight:bold'>";
+        zContentAdd += "               </div>";
+        zContentAdd += "            </div>";
+        $("#EmployeeResponse").html(zContentAdd);
+        
+    }
+</script>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            GetListComment();
+        });
+
+    </script>
+}
+

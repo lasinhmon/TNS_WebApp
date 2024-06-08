@@ -1,0 +1,153 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Debit.Pages.SubmenuModel
+@{
+}
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Dư nợ </span>
+    </div>
+</div> 
+
+<div class="row">
+    <div class="col-md-4 col-xl-4">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <b> Cá nhân</b>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitDepartment" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Khách hàng nhân viên phụ trách</h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitHistory" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Lịch sử GD nhân viên phụ trách</h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitHistory_Update" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Khách hàng xung đột cá nhân</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitHistory" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> </h6>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="col-md-4 col-xl-4">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <b> Bộ phận </b>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitDepartment" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Khách hàng bộ phận phụ trách</h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitHistory" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Lịch sử GD bộ phận phụ trách </h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ProcessForDeparments_Debit" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Khách hàng xung đột bộ phận</h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ReportByYear" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Nguồn vốn thực hiện</h6>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+
+   <div class="col-md-4 col-xl-4">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <b>Thống kê theo chi nhánh</b>
+            </div>
+            <ul class="list-group list-group-flush">
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ReportByYear" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-receipt-alt md-2"></i> Nguồn vốn thực hiện</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ReportByYear" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-receipt-alt md-2"></i> Nguồn vốn KPI</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ReportByYear" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-receipt-alt md-2"></i>  </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ReportByYear" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-receipt-alt md-2"></i>  </h6>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+   
+
+</div>
+<br/>
+<div class="row">
+    <div class="col-md-4 col-xl-4">
+        <div class="card border-secondary">
+            <div class="card-header bg-secondary text-white">
+                <b>Quản trị</b>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ProcessForDeparments" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-angle-double-right md-2"></i>Phân bổ Khách hàng cá nhân </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/ProcessForDeparments" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-angle-double-right md-2"></i>Phân bổ Khách hàng quản trị </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Debit/DebitHistory" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Lịch sử Khách hàng</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-angle-double-right md-2"></i> &nbsp;</h6>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,232 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Debit.Pages.ProcessForDeparments_DebitModel
+@{
+}<style>
+     .tns-field-name {
+         width: 130px;
+     }
+</style>
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-rightt"></span>
+        <a href="~/KPI_Debit/Submenu" style="text-decoration:none; color:#4c4c4c">Nguồn vốn</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Phân bổ tài khoản về bộ phận</span>
+    </div>
+</div>
+
+<div class="row" style="font-size:14px">
+     
+    <div class="col">
+
+        <div class="input-group mb-2">
+            <span class="input-group-text"><b>KHÁCH HÀNG XUNG ĐỘT </b></span>
+            <input id="txt_Search" type="text" class="form-control" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="button-addon2">
+          
+             <select id="MonthView" class="form-select w-sm">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+            <select id="YearView" class="form-select w-sm">
+                @for (int i = 2020; i < 2030; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+            </select>
+                <select id="Department_View" class="form-select w-sm">
+                    @foreach (string[] zItem in Model.Departments)
+                    {
+                        <option value="@zItem[1]">@zItem[2]</option>
+                    }
+                </select>
+            
+            <button class="btn btn-primary" onclick="btn_Search_Click()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <table id="LV_Client" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <thead>
+                <tr>
+                    <th class="text-center">STT</th>
+                    <th class="text-center">Mã Khách Hàng</th>
+                    <th class="text-center">Tên Khách Hàng</th>
+                    @* <th class="text-center">Mã hợp đồng</th> *@
+                    <th class="text-center">Mã PGD</th>
+                    <th class="text-center">Tên PGD</th>
+                </tr>
+            </thead>
+
+            <tbody id="LV_Client_DataBody">
+            </tbody>
+
+        </table>
+        <div id="LV_Client_Waiting" style="display:none">
+            <div class='text-center'>
+                <div class='spinner-border text-primary m-5' role='status'>
+                    <span class='sr-only'>Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Update_Form" tabindex="-1" aria-labelledby="Modal_Update_Label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Update_Title">Chọn đơn vị thụ hưởng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Update_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Update_lbl_ItemIndex"></div>
+                            <div id="Modal_Update_lbl_ItemKey"></div>
+                            <div id="Modal_Update_lbl_UnitKey"></div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text tns-field-name">Mã khách hàng</span>
+                                    <input id="Modal_Update_lbl_ItemID" type="text" class="form-control" aria-label="ID">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text tns-field-name">Số TK tiền gửi</span>
+                                    <input id="Modal_Update_lbl_ItemAccount" type="text" class="form-control" aria-label="Account">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text tns-field-name">Tên khách hàng</span>
+                                    <input id="Modal_Update_lbl_ItemName" type="text" class="form-control" aria-label="Name">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text tns-field-name">Số tiền</span>
+                                    <input id="Modal_Update_lbl_ItemTotalMoney" type="text" class="form-control" aria-label="Name">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="Modal_Update_Panel"></div>
+                    <div id="Modal_Update_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+     
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        
+    });
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+
+</script>
+
+
+<script>
+     function btn_Search_Click() {
+        
+       LV_Client_LoadData_Ajax();
+    }
+
+      function LV_Client_LoadData_Ajax() {
+      
+      $("#LV_Client_Waiting").css("display", "");
+      $("#LV_Client_DataBody").html("");
+      var zSearchContent = $("#txt_Search").val();
+
+      var zMonthView = $('#MonthView').find(":selected").val();
+      var zYearView = $('#YearView').find(":selected").val();
+       var zDepartmentID = $('#Department_View').find(":selected").val();
+      var zDataRequest = { "InMonth": zMonthView, "InYear": zYearView, "DepartmentID": zDepartmentID  ,"searchContent": zSearchContent };
+       
+      $.ajax({
+          type: 'POST',
+          url: "/KPI_Debit/ProcessForDeparments_Debit?handler=ConflictDepartment",
+          data: JSON.stringify(zDataRequest),
+          contentType: "application/json",
+          dataType: "json",
+      })
+          .done(function (dataResponse) {
+              $("#txt_MessageLog").html(JSON.stringify(dataResponse));
+              LV_Client_DisplayData(dataResponse);
+              $("#LV_Client_Waiting").css("display", "none");
+          })
+          .fail(function (error) {
+              alert('Error : ' + error.responseText);
+          });
+  }
+  function LV_Client_DisplayData(dataview) {
+      var zStyle_RecordView = "";
+       $("#txt_MessageLog").html(JSON.stringify(dataview));
+      var n = dataview.length;
+      var zContent = "";
+
+      if (dataview[0].id == "ERROR") {
+          $("#txt_MessageLog").html(dataview[i].name);
+      }
+      else {
+          for (i = 1; i < n; i++) {
+              zContent += "       <tr style='cursor:pointer;'  onclick='LV_Client_Row_Click(" + i + ")'>";
+              zContent += "           <td >";
+              zContent += "               <div> " + i + " </div>";
+              zContent += "               <div style='display:none'>";
+              zContent += "                   <div id='LV_Client_lbl_ItemKey_" + i + "'>" + dataview[i].key + "</div>";
+              zContent += "               </div>";
+              zContent += "           </td>";
+              zContent += "           <td id='LV_Client_lbl_ItemID_" + i + "'>" + dataview[i].customerID + "</td>";
+              zContent += "           <td id='LV_Client_lbl_ItemName_" + i + "'>" + dataview[i].customerName + "</td>";
+       //         zContent += "           <td id='LV_Client_lbl_ItemAccount_" + i + "' class='text-end'>" + dataview[i].contractID + "</td>";
+              zContent += "           <td id='LV_Client_lbl_ItemTotalMoney_" + i + "' class='text-end'>" + dataview[i].departmentID + "</td>";
+              zContent += "           <td class='text-end'>" + dataview[i].departmentName + "</td>";
+              zContent += "       </tr>";
+          }
+          $("#LV_Client_DataBody").html(zContent);
+      }
+  }
+
+  
+
+</script>
+

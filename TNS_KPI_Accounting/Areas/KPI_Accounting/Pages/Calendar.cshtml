@@ -1,0 +1,326 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.CalendarModel
+@{
+
+}
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Accounting/Submenu" style="text-decoration:none; color:#4c4c4c">Kế toán</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Trực quầy giao dịch</span>
+    </div>
+</div>
+<div>
+    <table id="datatable-grid" class="table table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:14px">
+        <thead>
+            <tr>
+                <th colspan="7" class="text-center">
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <button type="button" class="btn btn-success uil-angle-double-left" onclick="CalendarLoad_Ajax('Pre')"> </button>
+                        <button type="button" class="btn btn-outline-success" style="width:200px" onclick="Modal_Selected_Show()" id="txt_MonthCurrent">01-2023</button>
+                        <button type="button" class="btn btn-success uil-angle-double-right" onclick="CalendarLoad_Ajax('Next')"> </button>
+                    </div>
+                </th>
+
+            </tr>
+            <tr>
+                <th class="text-center bg-primary text-light" style="width:14%"> Thứ Hai </th>
+                <th class="text-center bg-primary text-light" style="width:14%"> Thứ Ba </th>
+                <th class="text-center bg-primary text-light" style="width:14%"> Thứ Tư </th>
+                <th class="text-center bg-primary text-light" style="width:14%"> Thứ Năm </th>
+                <th class="text-center bg-primary text-light" style="width:14%"> Thứ Sáu </th>
+                <th class="text-center bg-primary text-light" style="width:14%"> Thứ Bảy </th>
+                <th class="text-center bg-primary text-light" style="width:14%"> Chủ Nhật </th>
+            </tr>
+        </thead>
+        <tbody id="Calendar_Content">
+        </tbody>
+    </table>
+    <div id="Calendar_Waiting" style="display:none; ">
+        <div class='text-center'>
+            <div class='spinner-border text-primary m-1' role='status'>
+                <span class='sr-only'>Loading...</span>
+            </div>
+            <div class="spinner-border text-secondary m-1" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-border text-success m-1" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px">
+    </div>
+</div>
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Update_Form" tabindex="-1" aria-labelledby="Modal_Update_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Update_Title">Thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div id="Modal_Update_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Update_lbl_ItemIndex"></div>
+                        </div>
+                        <div id="Modal_Update_Waiting" style="display:none">
+                            <div class='text-center'>
+                                <div class='spinner-border text-primary m-1' role='status'>
+                                    <span class='sr-only'>Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:none;" id="Modal_Update_ViewInfo">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="Modal_Update_rdo_Counter" value="0" id="Modal_Update_rdo_Counter0" checked>
+                                <label class="form-check-label" for="rdo_Counter0">
+                                    Không trực quầy GD
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="Modal_Update_rdo_Counter" value="1" id="Modal_Update_rdo_Counter1">
+                                <label class="form-check-label" for="rdo_Counter1">
+                                    Quầy giao dịch 1
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="Modal_Update_rdo_Counter" value="2" id="Modal_Update_rdo_Counter2">
+                                <label class="form-check-label" for="rdo_Counter2">
+                                    Quầy giao dịch 2
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button id="Modal_Update_btn_Save" type="submit" class="btn btn-primary" onclick="Modal_Update_Save()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="Modal_Selected_Form" tabindex="-1" aria-labelledby="Modal_Selected_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="mb-3 row">
+                        <div class="input-group">
+                            <select id="MonthView" class="form-select w-auto">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                            <select id="YearView" class="form-select w-auto">
+                                @for (int i = 2020; i < 2028; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                            <button id="btn_Search" class="btn btn-primary" onclick="Modal_Selected_OK()">
+                               OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    var DataInCalendar;
+    $(document).ready(function () {
+        CalendarLoad_Ajax("Now");
+    });
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+    function CalendarLoad_Ajax(Action) {
+        var zMonthCurrent = $('#txt_MonthCurrent').text();
+        $("#Calendar_Waiting").css("display", "");
+        var zDataRequest = { "monthView": zMonthCurrent, "action": Action };
+        $("#Calendar_Content").html("");
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/Calendar?handler=View",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                if (dataResponse.id != "ERROR") {
+                    $("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                    DataInCalendar = dataResponse;
+                    Calendar_DisplayData();
+                }
+                else {
+                    alert("Error Load Data !");
+                    $("#txt_MessageLog").html("error : " + dataResponse.name);
+                }
+            })
+            .fail(function (error) {
+                alert("Error Call Ajax");
+                $("#txt_MessageLog").html("error : " + error.responseText);
+            });
+    }
+    function Calendar_DisplayData() {
+        
+        var i, j;
+        var zContent = "";
+        var zDay = 0;
+        var zFlagBegin = 0;
+        var zContinus = 1;
+        var i = 0;
+        var zDataInDay = "";
+        while (zContinus == 1) {
+            zContent += "<tr>";
+            for (j = 0; j < 7; j++) {
+                zDataInDay = "";
+                if (i == 0 & j == DataInCalendar.firstDayOfMonth) {
+                    zFlagBegin = 1;
+                }
+                if (zFlagBegin) {
+                    zDay++;
+                    zDataInDay = "<div>" + zDay + "</div>";
+                    if (DataInCalendar.data[zDay - 1] == "0")
+                        zDataInDay += "<div class='text-center' ></div>";
+                    else
+                        zDataInDay += "<div id='cal_" + i + "" + j + "' class='text-center' style='font-weight:bold; color:maroon'> Trực quầy " + DataInCalendar.data[zDay - 1] + "</div>";
+
+                    if (zDay > DataInCalendar.daysInMonth) {
+                        zFlagBegin = 0;
+                        zDay = 0;
+                    }
+
+                }
+                if (zDay > 0) {
+                    zContent += "<td id='c" + i + "" + j + "' onclick='Modal_Update_Show(" + zDay + ")' style='height:60px;cursor:pointer'>";
+                    zContent += zDataInDay;
+                }
+                else
+                    zContent += "<td class='bg-secondary-subtle opacity-25' id='c" + i + "" + j + "' style='height:60px;'>";
+
+                zContent += "</td>";
+                if (zFlagBegin == 0 && j == 6) {
+                    zContinus = 0;
+                }
+            }
+            zContent += "</tr>";
+            i++;
+        }
+        $("#Calendar_Waiting").css("display", "none");
+        $('#txt_MonthCurrent').text(DataInCalendar.monthView);
+        $("#Calendar_Content").html(zContent);
+
+        //$("#txt_MessageLog").html(JSON.stringify(DataInCalendar));
+    }
+</script>
+<script>
+    function Modal_Update_Show(Day) {
+        var zItemKey = "";
+        var zMonthCurrent = $('#txt_MonthCurrent').text();
+
+        $("#Modal_Update_Form").modal('show');
+        $('#Modal_Update_Title').text(Day + "-" + zMonthCurrent);
+        $('#Modal_Update_lbl_ItemIndex').text(Day);
+
+        $("#Modal_Update_ViewInfo").css("display", "");
+        $("#Modal_Update_Waiting").css("display", "none");
+
+        if (DataInCalendar.data[Day-1] == 0) {
+            $('#Modal_Update_rdo_Counter0').prop('checked', true);
+            $('#Modal_Update_rdo_Counter1').prop('checked', false);
+            $('#Modal_Update_rdo_Counter2').prop('checked', false);
+        }
+        else if (DataInCalendar.data[Day-1] == 1) {
+            $('#Modal_Update_rdo_Counter0').prop('checked', false);
+            $('#Modal_Update_rdo_Counter1').prop('checked', true);
+            $('#Modal_Update_rdo_Counter2').prop('checked', false);
+        }
+        else {
+            $('#Modal_Update_rdo_Counter0').prop('checked', false);
+            $('#Modal_Update_rdo_Counter1').prop('checked', false);
+            $('#Modal_Update_rdo_Counter2').prop('checked', true);
+        }
+        
+    }
+
+    function Modal_Update_Save() {
+
+        var zDate = $('#Modal_Update_Title').text();
+        var zAtCounter = $('input[name="Modal_Update_rdo_Counter"]:checked').val();
+        var zDay = $('#Modal_Update_lbl_ItemIndex').text();
+        $("#Modal_Update_Waiting").css("display", "");
+        $("#Modal_Update_btn_Save").css("display", "none");
+        var zDataUpdate = {
+            "name": zDate,
+            "atCounter": zAtCounter
+        };
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/Calendar?handler=Update",
+            data: JSON.stringify(zDataUpdate),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#Modal_Update_Waiting").css("display", "none");
+                $("#Modal_Update_btn_Save").css("display", "");
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                if (dataResponse.id != "ERROR") {
+                    DataInCalendar.data[zDay - 1] = dataResponse.atCounter;
+                    $("#Calendar_Content").html("");
+                    Calendar_DisplayData();
+                }
+                else {
+                    alert("Error Update !");
+                    $("#txt_MessageLog").html("error : " + dataResponse.name);
+                }
+            })
+            .fail(function (r) {
+                alert("Error Call Ajax !");
+                $("#txt_MessageLog").html("error : " + r.responseText);
+            })
+
+        $("#Modal_Update_Form").modal('hide');
+    }
+
+</script>
+<script>
+    function Modal_Selected_Show() {
+        var zItemKey = "";
+        var zMonthCurrent = $('#txt_MonthCurrent').text();
+
+        $("#Modal_Selected_Form").modal('show');
+        var zMonth = zMonthCurrent.substring(0, 2);
+        var zYear = zMonthCurrent.substring(3, 7);
+        $('#MonthView option')[zMonth - 1].selected = true;
+        $('#YearView option')[zYear - 2020].selected = true;
+    }
+    function Modal_Selected_OK() {
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+        if(zMonthView < 10)
+            $('#txt_MonthCurrent').text("0" + zMonthView + "-" + zYearView);
+        else
+            $('#txt_MonthCurrent').text(zMonthView + "-" + zYearView);
+
+        $("#Modal_Selected_Form").modal('hide');
+        CalendarLoad_Ajax("");
+    }
+</script>

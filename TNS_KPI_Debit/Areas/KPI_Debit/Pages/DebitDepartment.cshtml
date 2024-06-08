@@ -1,0 +1,276 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Debit.Pages.DebitDepartmentModel
+@{
+}
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Debit/Submenu" style="text-decoration:none; color:#4c4c4c">Dư nợ</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Tài khoản</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:26px; font-weight:bold">
+        DANH SÁCH TÀI KHOẢN TRỰC THUỘC QUẢN LÝ CỦA BỘ PHẬN
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div>
+            <div class="input-group">
+                <input id="txt_Search" type="text" class="form-control" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="button-addon2">
+                 <select id="MonthView" class="form-select w-sm">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <select id="YearView" class="form-select w-sm">
+                    @for (int i = 2020; i < 2030; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                
+                <select id="Department_View" class="form-select w-sm">
+                    @foreach (string[] zItem in Model.Departments)
+                    {
+                        <option value="@zItem[1]">@zItem[2]</option>
+                    }
+                </select>
+                <button class="btn btn-primary" onclick="btn_Search_Click()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div style="font-weight:bold;color:maroon" id="Info_View"></div>
+
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Mã Khách Hàng</th>
+                        <th class="text-center">Tên Khách Hàng</th>
+                        <th class="text-center">Số Tài Khoản Tiền Gởi</th>
+                        <th class="text-center">Cán bộ phụ trách</th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+
+                <tbody id="LV_DataBody">
+                </tbody>
+
+            </table>
+            <div id="LV_Waiting" style="display:none">
+                <div class='text-center'>
+                    <div class='spinner-border text-primary m-5' role='status'>
+                        <span class='sr-only'>Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+
+<div id="Modal_Area">
+    <div class="modal fade" id="Update_ModalForm" tabindex="-1" aria-labelledby="Update_ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="Update_ModalBody" class="mb-3 row">
+                        <div class="input-group">
+                            <div id="Update_lbl_CustomerKey" style="display:none"></div>
+                            <div id="Update_lbl_CustomerIndex" style="display:none"></div>
+                            <div class="form-outline" style="width:90%">
+                                <input id="Update_txt_CustomerName" class="form-control">
+                            </div>
+                            <div>
+                                <button id="Update_btn_Action" type="button" class="btn btn-primary" onclick="Update_Action()">
+                                    <i class="bx bx-save font-size-18"></i>
+                                </button>
+                                <div id="Update_ModalWaiting" style="display:none">
+                                    <div class='spinner-border text-primary m-1' role='status'>
+                                        <span class='sr-only'>Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="Update_ModalError" style="display:none; color:red">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="ListView_ModalForm" tabindex="-1" aria-labelledby="ListView_ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ListView_ModalTitle">thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="ListView_ModalWaiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="ListView_ModalBody" class="mb-3 row">
+                    </div>
+                    <div id="ListView_ModalError" style="display:none; color:red">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+</script>
+
+<script>
+    function btn_Search_Click() {
+        LV_LoadData_Ajax();
+
+    }
+    function LV_LoadData_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+
+        var zDepartmentID = $('#Department_View').find(":selected").val();
+        var zSearchContent = $("#txt_Search").val();
+         var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+
+        //alert(zMonth + ":" + zTRCD + ":" + zSearchContent);
+        var zDataRequest = { 
+             "InMonth": zMonthView, 
+              "InYear": zYearView, 
+            "departmentID": zDepartmentID, 
+            "searchContent": zSearchContent };
+
+            console.table(zDataRequest);
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Debit/DebitDepartment?handler=LoadData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+            console.table(dataResponse);
+
+                LV_DisplayData(dataResponse);
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+   function LV_DisplayData(dataview) {
+    var zStyle_RecordView = "";
+    var n = dataview.length;
+    var zContent = "";
+
+    if (n > 0 && dataview[0].id == "ERROR") {
+        $("#txt_MessageLog").html(dataview[0].name);
+    }
+    else {
+        $("#Info_View").text(dataview[0].name);
+
+        for (var i = 1; i < n; i++) {
+            zContent += "       <tr>";
+            zContent += "           <td>";
+            zContent += "               <div> " + i + " </div>";
+            zContent += "               <div style='display:none' id='LV_lbl_Status_" + i + "'>" + dataview[i].status + "</div>";
+            zContent += "           </td>";
+            zContent += "           <td>" + dataview[i].id + "</td>";
+            zContent += "           <td>" + dataview[i].name + "</td>";
+            zContent += "           <td>" + dataview[i].accountNumber + "</td>";
+            zContent += "           <td style='cursor:pointer' " + dataview[i].btn_SelectEmployee_Action + " >";
+            if (dataview[i].employeeName && dataview[i].employeeName.length > 0) {
+                zContent += "<img id='LV_img_person_" + i + "' src='" + dataview[i].photoPath + "' alt = '' class='avatar-xs rounded-circle me-2' >";
+                zContent += "<span id='LV_lbl_EmployeeName_" + i + "'>" + dataview[i].employeeName + "</span>";
+            }
+            else {
+                zContent += "<img id='LV_img_person_" + i + "' src='/images/users/avatar-0.jpg' alt = '' class='avatar-xs rounded-circle me-2' >";
+                zContent += "<span id='LV_lbl_EmployeeName_" + i + "'>" + dataview[i].employeeName + "</span>";
+            }
+            zContent += "</td>";
+
+            zContent += "           <td></td>";
+            zContent += "           <td></td>";
+            zContent += "       </tr>";
+        }
+        $("#LV_DataBody").html(zContent);
+    }
+}
+
+</script>
+<script>
+    function Approval_Action(Index, Key) {
+        var zImg = '/images/waiting.gif';
+        $("#LV_img_person_" + Index).attr('src', zImg);
+        var zStatus = $("#LV_lbl_Status_" + Index).text();
+        var zDataRequest = { "autoKey": Key, "status": zStatus };
+        //alert(JSON.stringify(zDataRequest));
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Debit/DebitDepartment?handler=ApprovalEmployee",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                zImg = dataResponse.photoPath;
+                $("#LV_img_person_" + Index).attr('src', zImg);
+                $("#LV_lbl_EmployeeName_" + Index).text(dataResponse.employeeName);
+                $("#LV_lbl_Status_" + Index).text(dataResponse.status);
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+</script>
+

@@ -1,0 +1,633 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TaskEditModel
+@{
+    string css_form_input = "background-color:#f6fffe";
+    var i = 0;
+
+}
+
+<div class="row" style="margin-top:-26px">
+    <div><a style="color:#af0b35; font-size:15px; font-weight:bold" href="~/Tasks/TaskAll"><img src="~/images/return-88.png" style="width:24px" /> Quay lại</a></div>
+</div>
+<div class="container-fluid">
+    <!-- start page title -->
+    <div class="row" style="padding-top:20px">
+        <h4 class="mb-0 text-primary">NỘI DUNG CÔNG VIỆC</h4>
+    </div>
+
+    <!-- end page title -->
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div>@Model.Message</div>
+                <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#Info" role="tab">
+                            <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                            <span class="d-none d-sm-block">Thông tin</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#fileAttack" role="tab">
+                            <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                            <span class="d-none d-sm-block">File đính kèm</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#messages" role="tab">
+                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                            <span class="d-none d-sm-block">Messages</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#SharedToUsers" role="tab">
+                            <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
+                            <span class="d-none d-sm-block">Chia sẽ</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content p-3 text-muted bg-body" style="">
+                    <div class="tab-pane active" id="Info" role="tabpanel">
+                        <form method="post">
+                            <div> <input hidden asp-for="@Model.Todo.TaskKey" /> </div>
+                            <table style=" width:100%; border:solid 0px Red">
+                                <tr>
+                                    <td style="width:130px; color:#161616; font-weight:bold;padding:4px;">Công việc</td>
+                                    <td colspan="5">
+                                        <input asp-for="@Model.Todo.Subject" class="form-control" type="text">
+                                        <span asp-validation-for="@Model.Todo.Subject"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="width:130px; color:#161616; font-weight:bold;padding:4px;">Ngày bắt đầu</td>
+                                    <td style="width:200px; display: block; padding:4px; ">
+                                        <input asp-for="@Model.Todo.StartDate" class="form-control" type="datetime-local">
+                                        <span asp-validation-for="@Model.Todo.StartDate"></span>
+                                    </td>
+                                    <td style="width:130px; color:#161616; font-weight:bold;padding:4px;">Ngày hoàn thành</td>
+                                    <td style="width:200px; display: block; padding:4px; ">
+                                        <input asp-for="@Model.Todo.FinishDate" class="form-control" type="datetime-local">
+                                        <span asp-validation-for="@Model.Todo.FinishDate"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:130px; color:#161616; font-weight:bold;padding:4px;">Mức độ</td>
+                                    <td style="width:200px; display: block; padding:4px; ">
+                                        <select asp-for="@Model.Todo.PriorityKey" class="form-select w-sm">
+                                            @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoPriorities)
+                                            {
+                                                <option value="@zItem.Value">@zItem.Name</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td style="width:130px; color:#161616; font-weight:bold;padding:4px;">Tình trạng</td>
+                                    <td style="width:200px; display: block; padding:4px; ">
+                                        <select asp-for="@Model.Todo.StatusKey" class="form-select w-sm">
+                                            @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoStatus)
+                                            {
+                                                <option value="@zItem.Value">@zItem.Name</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td style="width:130px; color:#161616; font-weight:bold;padding:4px;">Tiến độ</td>
+                                    <td style="width:200px; display: block; padding:4px; ">
+                                        <select asp-for="@Model.Todo.Complete" class="form-select w-sm">
+                                            <option value="00">00%</option>
+                                            <option value="10">10%</option>
+                                            <option value="20">20%</option>
+                                            <option value="30">30%</option>
+                                            <option value="40">40%</option>
+                                            <option value="50">50%</option>
+                                            <option value="60">60%</option>
+                                            <option value="70">70%</option>
+                                            <option value="80">80%</option>
+                                            <option value="90">90%</option>
+                                            <option value="100">100%</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="mb-3 row">
+                                <div class="card-body">
+                                    <textarea asp-for="@Model.Todo.TaskContent" id="classic-editor"></textarea>
+                                    <span asp-validation-for="@Model.Todo.TaskContent"></span>
+                                </div>
+
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" asp-action="SaveTask" class="btn btn-primary btn-rounded waves-effect waves-light">Cập nhật</button>
+                                <button type="submit" asp-action="SaveReturn" class="btn btn-primary btn-rounded waves-effect waves-light">Cập nhật & Quay lại</button>
+                            </div>
+                            <div>
+                                <input asp-for="@Model.FilesAttach" multiple style="display: none;" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="fileAttack" role="tabpanel">
+                        @*                            <iframe src="~/Tasks/UploadFile?Key=@Model.Todo.TaskKey" style="width:100%;height:500px;overflow-x: hidden;overflow-y: auto;"></iframe>
+                        *@
+                        <label asp-for="@Model.FilesAttach" id="btnFilesSelected" class="btn btn-primary">Chọn File...</label>
+
+                    </div>
+                    <div class="tab-pane" id="messages" role="tabpanel">
+                        <div style="background-color:white; ">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="position-relative">
+                                        <input id="txtComment" type="text" class="form-control chat-input rounded" placeholder="Enter Message...">
+
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-primary chat-send w-md waves-effect waves-light" onclick="SendComment()"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send float-end"></i></button>
+                                </div>
+                            </div>
+                            <div id="Panel_ListComment" style="overflow-x:hidden; overflow-y: auto; width:auto;">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary m-1" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Waiting"></div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="SharedToUsers" role="tabpanel">
+                        <p class="mb-0">
+                            <div class="input-group">
+                                <div class="form-outline" style="width:80%">
+                                    <input id="Shared_Search_Content" class="form-control" placeholder="Nhập thông tin nhân viên muốn chia sẽ..." />
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="Shared_Search_Users()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </p>
+                        <div id="Shared_Table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div><!-- container-fluid -->
+<div class="modal fade" id="Modal_SharedSearch" tabindex="-1" aria-labelledby="ModalLabelShare" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="Modal_SharedSearch_txt_title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="Modal_SharedSearch_Waiting">
+                    <div class='text-center'>
+                        <div class='spinner-border text-primary m-1' role='status'>
+                            <span class='sr-only'>Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="Modal_SharedSearch_Body" class="mb-3 row">
+                    <div id="Modal_SharedSearch_Table"></div>
+                </div>
+                <div id="Modal_SharedSearch_Message" class="mb-3 row">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Shared_Search_AddUsers()">Shared</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div>
+    <div class="modal fade" id="Modal_SharedUpdate" tabindex="-1" aria-labelledby="ModalSharedUpdateLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_SharedUpdate_txt_title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_SharedUpdate_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Modal_SharedUpdate_Body" class="mb-3 row" style="padding:10px">
+                        <table>
+                            <tr>
+                                <td><b>Đọc</b></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input id="Modal_SharedUpdate_chk_RoleRead" type="checkbox" class="form-check-input">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Thêm</b></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input id="Modal_SharedUpdate_chk_RoleAdd" type="checkbox" class="form-check-input">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Sửa</b></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input id="Modal_SharedUpdate_chk_RoleEdit" type="checkbox" class="form-check-input">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Xóa</b></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input id="Modal_SharedUpdate_chk_RoleDel" type="checkbox" class="form-check-input">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Duyệt</b></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input id="Modal_SharedUpdate_chk_RoleApproval" type="checkbox" class="form-check-input">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="Modal_SharedUpdate_Message" class="mb-3 row">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="Shared_Update()">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div> <input hidden asp-for="@Model.EmployeeLoginKey" /> </div>
+<div id="txt_SharedUserAmount" style="display:none">@i</div>
+
+<!-- ckeditor -->
+<script src="~/layouts/minible/libs/@@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+<!--tinymce js-->
+<script src="~/layouts/minible/libs/tinymce/tinymce.min.js"></script>
+
+<!-- init js -->
+<script src="~/layouts/minible/js/pages/form-editor.init.js"></script>
+
+<script>
+    ClassicEditor
+        .create(document.querySelector('#classic-editor'))
+        .catch(error => {
+            alert(error);
+            console.error(error);
+        });
+
+    var _CommentLenght = 0;
+    function GetListComment() {
+        var key = $("#Todo_TaskKey").val();
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "commentGet", "taskKey": key }
+        }).done(function (dataResponse) {
+            ViewComment(dataResponse);
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+    function ViewComment(data) {
+        var employeeKey = $("#EmployeeLoginKey").val();
+        var i = 0;
+        _CommentLenght = data.length;
+        var zHeight = (_CommentLenght - 1) * 120;
+        var zContent = "<div>";
+        zContent += "   <div class='chat-conversation py-3'>";
+        zContent += "       <ul id='ListComment' class='list-unstyled mb-0 chat-conversation-message px-3' style='height:" + zHeight + "px' data-simplebar>";
+        for (i = 1; i < _CommentLenght; i++) {
+            var zStyle = "";
+            if (data[i].employeeKey == employeeKey)
+                zStyle = "class='right' ";
+
+            zContent += "<li " + zStyle + ">";
+            zContent += "   <div class='conversation-list'>";
+            zContent += "       <div class='ctext-wrap'>";
+            zContent += "           <div class='ctext-wrap-content'>";
+            zContent += "               <h5 class='font-size-14 conversation-name'><span class='text-reset '>" + data[i].employeeName + "</span> <span class='d-inline-block font-size-12 text-muted ms-2'>" + DateTimeToString(data[i].createdOn, "dd/MM/yy HH:mm") + "</span></h5>";
+            zContent += "               <p class='mb-0'>  " + data[i].comment + " </p>";
+            zContent += "           </div>";
+            zContent += "       </div>";
+            zContent += "   </div>";
+            zContent += "</li>";
+        }
+        zContent += "       </ul>";
+        zContent += "   </div>";
+        zContent += "</div>";
+        $("#Panel_ListComment").html(zContent);
+    }
+    function SendComment() {
+        var key = $("#Todo_TaskKey").val();
+        var zComment = $("#txtComment").val();
+
+        var zWaiting = "";
+        zWaiting += "<div class='text-center'>";
+        zWaiting += "  <div class='spinner-border text-primary m-1' role='status'>";
+        zWaiting += "      <span class='sr-only'>Loading...</span>";
+        zWaiting += "   </div>";
+        zWaiting += "</div>";
+        $("#Waiting").html(zWaiting);
+
+        $.ajax({
+            method: "GET",
+            url: "/Tasks/API",
+            data: { "cmd": "commentAdd", "taskKey": key, "comment": zComment }
+        })
+            .done(function (data) {
+                GetListComment();
+                $("#Waiting").html("");
+            });
+
+
+    }
+
+    var _Shared_Data;
+    function Shared_DataGet() {
+        var zTaskKey = $("#Todo_TaskKey").val();
+
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "sharedGet", "taskKey": zTaskKey }
+        }).done(function (dataResponse) {
+            _Shared_Data = dataResponse;
+            Shared_TableDisplay(dataResponse);
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+    function Shared_TableDisplay(data) {
+        var n = 0;
+        if (data != null)
+            n = data.length;
+        var zIconChecked = "<i class='bx bx-check-circle font-size-22 text-success'></i>";
+        var zIconUnChecked = "<i class='bx bx-check-circle font-size-22 text-secondary text-opacity-25'></i>";
+
+        var zContent = "";
+        zContent += ""
+        zContent += "<table id='Role_DataView' class='table'>";
+        zContent += "<thead>";
+        zContent += "   <tr>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> </th>";
+        zContent += "       <th class='text-center' style = 'width: 120px'> Mã nhân viên </th>";
+        zContent += "       <th class='text-center'> Tên </th>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> Đọc </th>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> Thêm </th>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> Sửa </th>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> Xóa </th>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> Duyệt </th>";
+        zContent += "       <th class='text-center' style = 'width: 80px'> </th>";
+        zContent += "   </tr>";
+        zContent += "</thead>";
+        zContent += "<tbody>";
+        for (i = 0; i < n; i++) {
+            var zRoleRead = zIconUnChecked;
+            var zRoleAdd = zIconUnChecked;
+            var zRoleEdit = zIconUnChecked;
+            var zRoleDel = zIconUnChecked;
+            var zRoleApproval = zIconUnChecked;
+
+            if (data[i].roleRead)
+                zRoleRead = zIconChecked;
+            if (data[i].roleAdd)
+                zRoleAdd = zIconChecked;
+            if (data[i].roleEdit)
+                zRoleEdit = zIconChecked;
+            if (data[i].roleDel)
+                zRoleDel = zIconChecked;
+            if (data[i].roleApproval)
+                zRoleApproval = zIconChecked;
+
+            zContent += "   <tr>";
+            zContent += "       <td> <img src='" + data[i].photoPath + "' class='avatar-sm'/></td>";
+            zContent += "       <td class='text-center'> " + data[i].employeeID + "</td>";
+            zContent += "       <td> " + data[i].employeeName + "</td>";
+            zContent += "       <td class='text-center'> " + zRoleRead + "</td>";
+            zContent += "       <td class='text-center'> " + zRoleAdd + "</td>";
+            zContent += "       <td class='text-center'> " + zRoleEdit + "</td>";
+            zContent += "       <td class='text-center'> " + zRoleDel + "</td>";
+            zContent += "       <td class='text-center'> " + zRoleApproval + "</td>";
+            zContent += "       <td>";
+            zContent += "           <button type='button' class='btn btn-primary' onclick='Shared_UpdateView(" + i + ")'> <i class='uil-pen font-size-18'></i></button>";
+            zContent += "       </td>";
+            zContent += "   </tr>";
+        }
+
+        zContent += "</tbody>";
+        zContent += "</table>";
+
+        $("#Shared_Table").html(zContent);
+    }
+
+    var _Shared_Index_Selected = 0;
+    function Shared_UpdateView(index) {
+
+        _Shared_Index_Selected = index;
+        $("#Modal_SharedUpdate_txt_title").text(_Shared_Data[index].employeeName);
+
+        if (_Shared_Data[index].roleRead)
+            $("#Modal_SharedUpdate_chk_RoleRead").prop("checked", true);
+        else
+            $("#Modal_SharedUpdate_chk_RoleRead").prop("checked", false);
+
+        if (_Shared_Data[index].roleAdd)
+            $("#Modal_SharedUpdate_chk_RoleAdd").prop("checked", true);
+        else
+            $("#Modal_SharedUpdate_chk_RoleAdd").prop("checked", false);
+
+
+        if (_Shared_Data[index].roleEdit)
+            $("#Modal_SharedUpdate_chk_RoleEdit").prop("checked", true);
+        else
+            $("#Modal_SharedUpdate_chk_RoleEdit").prop("checked", false);
+
+        if (_Shared_Data[index].roleDel)
+            $("#Modal_SharedUpdate_chk_RoleDel").prop("checked", true);
+        else
+            $("#Modal_SharedUpdate_chk_RoleDel").prop("checked", false);
+
+        if (_Shared_Data[index].roleApproval)
+            $("#Modal_SharedUpdate_chk_RoleApproval").prop("checked", true);
+        else
+            $("#Modal_SharedUpdate_chk_RoleApproval").prop("checked", false);
+
+        $("#Modal_SharedUpdate").modal('show');
+    }
+    function Shared_Update() {
+        var zTaskKey = $("#Todo_TaskKey").val();
+        var zRoleRead = $('#Modal_SharedUpdate_chk_RoleRead').is(":checked");
+        var zRoleAdd = $('#Modal_SharedUpdate_chk_RoleAdd').is(":checked");
+        var zRoleEdit = $('#Modal_SharedUpdate_chk_RoleEdit').is(":checked");
+        var zRoleDel = $('#Modal_SharedUpdate_chk_RoleDel').is(":checked");
+        var zRoleApproval = $('#Modal_SharedUpdate_chk_RoleApproval').is(":checked");
+        var zContentUpdate = _Shared_Data[_Shared_Index_Selected].employeeKey + ":";
+
+        if (zRoleRead)
+            zContentUpdate += "1";
+        else
+            zContentUpdate += "0";
+
+        if (zRoleAdd)
+            zContentUpdate += "1";
+        else
+            zContentUpdate += "0";
+        if (zRoleEdit)
+            zContentUpdate += "1";
+        else
+            zContentUpdate += "0";
+
+        if (zRoleDel)
+            zContentUpdate += "1";
+        else
+            zContentUpdate += "0";
+
+        if (zRoleApproval)
+            zContentUpdate += "1";
+        else
+            zContentUpdate += "0";
+
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "sharedUpdate", "taskKey": zTaskKey, "content": zContentUpdate }
+        }).done(function (dataResponse) {
+            if (dataResponse.code == "OK") {
+                $("#Modal_SharedUpdate").modal('hide');
+                _Shared_Data[_Shared_Index_Selected].roleRead = zRoleRead;
+                _Shared_Data[_Shared_Index_Selected].roleAdd = zRoleAdd;
+                _Shared_Data[_Shared_Index_Selected].roleEdit = zRoleEdit;
+                _Shared_Data[_Shared_Index_Selected].roleDel = zRoleDel;
+                _Shared_Data[_Shared_Index_Selected].roleAapproval = zRoleApproval;
+                Shared_TableDisplay(_Shared_Data);
+            }
+            else {
+                $("#Modal_SharedUpdate_Message").html("<div style='color:red'>" + dataResponse.description + "</div>");
+            }
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+
+    }
+
+    var _Shared_SearchData;
+    function Shared_Search_Users() {
+
+        var zSearchContent = $("#Shared_Search_Content").val();
+        if (zSearchContent.length > 0) {
+            $("#Modal_SharedSearch_Waiting").css("display", "");
+            $("#Modal_SharedSearch_txt_title").text("Tìm kiếm : " + zSearchContent);
+            $("#Modal_SharedSearch").modal('show');
+            Shared_Search_DataGet(zSearchContent);
+        }
+    }
+    function Shared_Search_DataGet(searchContent) {
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "sharedSearch", "content": searchContent }
+        }).done(function (dataResponse) {
+            _Shared_SearchData = dataResponse;
+            Shared_Search_TableDisplay(dataResponse);
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+    function Shared_Search_TableDisplay(data) {
+        var i = 0;
+        var n = 0;
+        if (data != null)
+            n = data.length;
+
+        var zContent = "";
+        zContent += "   <table class'table table-hover'>";
+        for (i = 0; i < n; i++) {
+            zContent += "       <tr>";
+            zContent += "           <td style='width:80px'><img src='" + data[i].photoPath + "' class='avatar-sm'></td>";
+            zContent += "           <td style='width:120px'>" + data[i].employeeID + "</td>";
+            zContent += "           <td style='width:300px'>" + data[i].employeeName + "</td>";
+            zContent += "           <td style='width:100px'>";
+            zContent += "               <div class='form-check form-switch'>";
+            zContent += "                   <input id='Modal_SharedSearch_chk_role_" + i + "' type='checkbox' class='form-check-input'>";
+            zContent += "               </div>";
+            zContent += "           </td>";
+            zContent += "       </tr>";
+        }
+        zContent += "   </table>";
+        $("#Modal_SharedSearch_Waiting").css("display", "none");
+        $("#Modal_SharedSearch_Table").html(zContent);;
+    }
+    function Shared_Search_AddUsers() {
+        var zTaskKey = $("#Todo_TaskKey").val();
+        var employeeKey = $("#EmployeeLoginKey").val();
+
+        var zListSharedUser = "";
+        for (i = 0; i < _Shared_SearchData.length; i++) {
+            if ($("#Modal_SharedSearch_chk_role_" + i).is(':checked')) {
+                if (_Shared_SearchData[i].employeeKey != employeeKey) {
+                    zListSharedUser += _Shared_SearchData[i].employeeKey + ":" + _Shared_SearchData[i].employeeName + ";";
+                }
+            }
+        }
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "sharedAdd", "taskKey": zTaskKey, "content": zListSharedUser }
+        }).done(function (dataResponse) {
+            if (dataResponse.code == "OK") {
+                Shared_DataGet();
+                $("#Modal_SharedSearch").modal('hide');
+
+            }
+            else {
+                $("#Modal_SharedSearch_Message").html("<div style='color:red'>" + dataResponse.description + "</div>");
+            }
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+
+    }
+
+</script>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            GetListComment();
+            Shared_DataGet();
+
+            $("#FilesAttach").on("change", () => {
+                $("#btnFilesSelected").html($("#FilesAttach")[0].files.length + ' file(s) selected');
+            });
+        });
+
+    </script>
+    }
+

@@ -1,0 +1,274 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TaskSharedModel
+@{
+}
+<!-- DataTables -->
+<link href="~/Layouts/minible/libs/tns-simple/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+
+<div class="page-content">
+    <div class="row mb-2">
+        <div class="col-md-3">
+            <div class="float-md-end mb-3  text-primary" style="font-size:26px; font-weight:bold">
+                CÔNG VIỆC
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="md-3">
+                <form method="post">
+                    <div class="input-group">
+                        <div class="form-outline" style="width:80%">
+                            <input asp-for="PageSearch" class="form-control">
+                        </div>
+                        <button type="submit" asp-action="cmdSearch" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="float-md-end mb-3">
+                <a href="~/Tasks/TaskAdd" class="btn btn-primary waves-effect waves-light"><i class="mdi mdi-plus me-2"></i> Add New</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div style="color:maroon; padding:10px 10px 0 10px"><b><i>@Model.ErrorMessage</i></b></div>
+                <div class="card-body">
+                    <table id="datatable-grid" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th class="text-center text-light bg-info">STT</th>
+                                <th class="text-center text-light bg-info">Ngày</th>
+                                <th class="text-center text-light bg-info">Nhân Viên</th>
+                                <th class="text-center text-light bg-info">Công việc</th>
+                                <th class="text-center text-light bg-info">Hoàn thành</th>
+                                <th class="text-center text-light bg-info" style="width:100px">Mức độ</th>
+                                <th class="text-center text-light bg-info" style="width:120px">Tình trạng</th>
+                                <th class="text-center text-light bg-info">%</th>
+                                <th class="text-center text-light bg-info"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TaskListView != null)
+                            {
+                                for (int i = 0; i < Model.TaskListView.Rows.Count; i++)
+                                {
+                                    var zFinishDate = "";
+                                    TNS_Task.Areas.Tasks.Models.Task_Record zRecord = new TNS_Task.Areas.Tasks.Models.Task_Record();
+                                    zRecord.TaskKey = @Model.TaskListView.Rows[i]["TaskKey"].ToString();
+                                    zRecord.Subject = @Model.TaskListView.Rows[i]["Subject"].ToString();
+                                    zRecord.CreatedOn = (DateTime)@Model.TaskListView.Rows[i]["CreatedOn"];
+                                    if (@Model.TaskListView.Rows[i]["FinishDate"] != DBNull.Value)
+                                    {
+                                        zRecord.FinishDate = (DateTime)@Model.TaskListView.Rows[i]["FinishDate"];
+                                        zFinishDate = zRecord.FinishDate.Value.ToString("dd/MM/yyyy");
+                                    }
+
+                                    zRecord.StatusName = @Model.TaskListView.Rows[i]["StatusName"].ToString();
+                                    zRecord.Complete = (int)@Model.TaskListView.Rows[i]["Complete"];
+                                    zRecord.PriorityKey = (int)@Model.TaskListView.Rows[i]["PriorityKey"];
+                                    zRecord.StatusKey = (int)@Model.TaskListView.Rows[i]["StatusKey"];
+                                    zRecord.OwnerName = @Model.TaskListView.Rows[i]["OwnerName"].ToString();
+
+                                    var zPriorityIcon = "/images/Priority_" + zRecord.PriorityKey.ToString() + ".png";
+                                    var zStyleStatus = "";
+                                    switch (zRecord.StatusKey)
+                                    {
+                                        case 1:
+                                            zStyleStatus = "font-weight:bold; color :#af0b35";
+                                            break;
+                                        case 2:
+                                            zStyleStatus = "font-weight:bold; color :#00422b";
+                                            break;
+                                        case 3:
+                                            zStyleStatus = "color :#666666";
+                                            break;
+                                        case 4:
+                                            zStyleStatus = "color :#ce850a";
+                                            break;
+                                    }
+
+                                    <tr id="record_@zRecord.TaskKey">
+                                        <td style="@zStyleStatus;">@(i + 1)</td>
+                                        <td style="@zStyleStatus">@zRecord.CreatedOn.Value.ToString("dd/MM/yyyy")</td>
+                                        <td style="@zStyleStatus;"> @zRecord.OwnerName </td>
+                                        <td style="@zStyleStatus; cursor:pointer" onclick="GotoViewPage('@zRecord.TaskKey',@zRecord.StatusKey)"> @zRecord.Subject.ToString() </td>
+                                        <td style="@zStyleStatus">@zFinishDate</td>
+                                        <td> <img src="@zPriorityIcon"> </td>
+                                        <td style="@zStyleStatus">@zRecord.StatusName</td>
+                                        <td style="@zStyleStatus" class="text-end"> @zRecord.Complete.ToString()%</td>
+                                        <td>
+                                            <div class="btn-group mr-2" role="group" aria-label="First group">
+
+                                                @if (Model.UserLogin.Role.IsRead)
+                                                {
+                                                    <button type="button" class="btn btn-primary" onclick="Record_QuickView('@zRecord.TaskKey','view')">
+                                                        <i class="uil uil-eye font-size-18"></i>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> <!-- end col -->
+    </div>
+</div>
+<div>
+    <div class="modal fade" id="Modal_RecordQuick" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Chi tiết thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Waiting">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Modal_RecordBody" class="mb-3 row" style="display:none">
+                        <div id="Modal_Key"></div>
+                        <table style=" border-collapse: separate;border-spacing: 1em;">
+                            <tr>
+                                <td style="width:120px">Tiêu đề</td>
+                                <td id="txt_Subject" colspan="3" style="font-weight:bold"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:120px">Ngày bắt đầu</td>
+                                <td style="width:150px ; font-weight:bold" id="txt_StartDate"></td>
+                                <td style="width:80px">Mức độ</td>
+                                <td id="txt_Priority" style="font-weight:bold"></td>
+                            </tr>
+                            <tr>
+                                <td style="width:120px">Ngày hoàn thành</td>
+                                <td style="width:150px; font-weight:bold" id=" txt_FinishDate" s></td>
+                                <td style="width:80px">Tình trạng</td>
+                                <td id="txt_StatusName" style="font-weight:bold"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Tiến độ</td>
+                                <td id="txt_Complete" style="font-weight:bold"></td>
+                            </tr>
+                        </table>
+                        <div id="txt_TaskContent" class="row border"></div>
+                       
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="Modal_Footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="Record_Del()">Del</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="txtSearch" style="display:none">@Model.PageSearch</div>
+<div id="txtPage" style="display:none">@Model.PageCurrent</div>
+<!-- Required datatable js -->
+<script src="~/Layouts/minible/libs/tns-simple/js/jquery-3.7.0.js"></script>
+<script src="~/Layouts/minible/libs/tns-simple/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        new DataTable('#datatable-grid');
+        var zPage = $('#txtPage').text();
+        zTable.page(parseInt(zPage)).draw('page');
+    });
+    var zTable = $('#datatable-grid').DataTable({
+        "ordering": true,
+        "iDisplayLength": 25
+    });
+
+    function GotoViewPage(TaskKey, Status) {
+
+        var zPage = zTable.page.info().page;
+        var zSearch = $("#txtSearch").text();
+        var zUrl = "/Index";
+        var zContent = "\"PageView\"" + ":" + zPage + ",\"Search\"" + ":\"" + zSearch + "\"";
+        document.cookie = "Task_TaskShared={" + encodeURIComponent(zContent) + "}";
+        // alert(zContent);
+       
+            zUrl = "/Tasks/TaskProcess?key=" + TaskKey;
+     
+        window.location = zUrl;
+    }
+
+    function Record_QuickView(TaskKey, action) {
+
+        $("#Modal_RecordBody").css("display", "none");
+        $("#Modal_Waiting").css("display", "");
+
+        if (action == "delete")
+            $("#Modal_Footer").css("display", "");
+        else
+            $("#Modal_Footer").css("display", "none");
+
+        $("#Modal_Key").val(TaskKey);
+        $("#Modal_RecordQuick").modal('show');
+        Record_Get(TaskKey);
+    }
+
+    function Record_Get(TaskKey) {
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "taskGet", "taskKey": TaskKey }
+        }).done(function (dataResponse) {
+            Record_Display(dataResponse);
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+    function Record_Display(data) {
+
+        var i = 0;
+        $("#Modal_Waiting").css("display", "none");
+        $("#Modal_RecordBody").css("display", "");
+
+        $("#txt_Subject").html(data.subject);
+        $("#txt_StartDate").html(data.startDate);
+        $("#txt_FinishDate").html(data.finishDate);
+        $("#txt_Priority").html("<img src='/images/Priority_" + data.priorityKey + ".png'>");
+        $("#txt_StatusName").html(data.statusName);
+        $("#txt_Complete").html(data.complete +"%");
+
+        $("#txt_TaskContent").html(data.taskContent);
+    }
+    function Record_Del() {
+        var TaskKey = $("#Modal_Key").val();
+        $.ajax({
+            url: "/Tasks/API",
+            type: "GET",
+            data: { "cmd": "taskDel", "taskKey": TaskKey }
+        }).done(function (dataResponse) {
+            if (dataResponse.code == "OK ") {
+                $('#record_' + TaskKey).remove();
+                $("#Modal_RecordQuick").modal('hide');
+            }
+            else {
+                $("#txt_TaskContent").html("<div style='color:red'>" + dataResponse.description + "</div>");
+            }
+        })
+            .fail(function (r) {
+                alert("error : " + r.responseText);
+            })
+    }
+
+</script>

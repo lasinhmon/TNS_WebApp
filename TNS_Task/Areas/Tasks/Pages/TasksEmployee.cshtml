@@ -1,0 +1,165 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TasksEmployeeModel
+@{
+}
+<div class="page-content">
+    <div class="row mb-2">
+
+        <div class="text-primary" style="font-size:26px; font-weight:bold">
+            THỐNG KÊ BÁO CÁO CÔNG VIỆC
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <table class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="bg-gradient-secondary text-light text-center align-middle">STT</th>
+                                <th rowspan="2" class="bg-gradient-secondary text-light text-center align-middle">Danh mục</th>
+                                <th colspan="12" class="bg-secondary text-light text-center"> Năm 2023</th>
+                            </tr>
+                            <tr>
+                                <th class="bg-gradient-secondary text-light text-center"> 01</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 02</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 03</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 04</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 05</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 06</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 07</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 08</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 09</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 10</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 11</th>
+                                <th class="bg-gradient-secondary text-light text-center"> 12</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="">
+                                <td class="bg-info text-light">I</td>
+                                <td class="bg-info text-light" style=" font-weight:bold">Số công việc bắt đầu trong tháng</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[0].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[1].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[2].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[3].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[4].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[5].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light ext-end">@Model.TasksInMonth[6].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[7].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[8].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[9].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[10].All.ToString("#,##0")</td>
+                                <td class="bg-info text-light text-end">@Model.TasksInMonth[11].All.ToString("#,##0")</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-danger text-light">II</td>
+                                <td class="bg-danger text-light" style=" font-weight:bold">Số công việc chưa bắt đầu trong tháng</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[0].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[1].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[2].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[3].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[4].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[5].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[6].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[7].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[8].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[9].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[10].NotStarted.ToString("#,##0")</td>
+                                <td class="bg-danger text-light text-end">@Model.TasksInMonth[11].NotStarted.ToString("#,##0")</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-primary text-light">III</td>
+                                <td class="bg-primary text-light" style="font-weight:bold">Số công việc đang thực hiện trong tháng</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[0].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[1].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[2].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[3].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[4].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[5].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[6].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[7].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[8].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[9].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[10].InProcess.ToString("#,##0")</td>
+                                <td class="bg-primary text-light text-end">@Model.TasksInMonth[11].InProcess.ToString("#,##0")</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-warning-subtle text-black">IV</td>
+                                <td class="bg-warning-subtle text-black" style=" font-weight:bold">Số công việc tạm ngưng trong tháng</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[0].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[1].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[2].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[3].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[4].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[5].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[6].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[7].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[8].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[9].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[10].Pending.ToString("#,##0")</td>
+                                <td class="bg-warning-subtle text-black text-end">@Model.TasksInMonth[11].Pending.ToString("#,##0")</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-success text-light">V</td>
+                                <td class="bg-success text-light" style="font-weight:bold;">Số công việc hoàn thành trong tháng</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[0].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[1].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[2].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[3].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[4].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[5].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[6].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[7].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[8].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[9].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[10].Completed.ToString("#,##0")</td>
+                                <td class="bg-success text-light text-end">@Model.TasksInMonth[11].Completed.ToString("#,##0")</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-success-subtle" style="color:green;">V.1</td>
+                                <td class="bg-success-subtle" style="color:green; font-weight:bold; font-style:italic; padding-left:20px">Công việc mức độ 1</td>
+                                @for (int i = 0; i < 12; i++)
+                                {
+                                    <td class="bg-success-subtle text-end" style="color:green;">@Model.TasksInMonth[i].Completed_PriorityPercent[0].ToString("#,##0")%</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="bg-success-subtle" style="color:green;">V.2</td>
+                                <td class="bg-success-subtle" style="color:green; font-weight:bold; font-style:italic; padding-left:20px">Công việc mức độ 2</td>
+                                @for (int i = 0; i < 12; i++)
+                                {
+                                    <td class="bg-success-subtle text-end" style="color:green;">@Model.TasksInMonth[i].Completed_PriorityPercent[1].ToString("#,##0")%</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="bg-success-subtle" style="color:green;">V.3</td>
+                                <td class="bg-success-subtle" style="color:green; font-weight:bold; font-style:italic; padding-left:20px">Công việc mức độ 3</td>
+                                @for (int i = 0; i < 12; i++)
+                                {
+                                    <td class="bg-success-subtle text-end" style="color:green;">@Model.TasksInMonth[i].Completed_PriorityPercent[2].ToString("#,##0")%</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="bg-success-subtle" style="color:green;">V.4</td>
+                                <td class="bg-success-subtle" style="color:green; font-weight:bold; font-style:italic; padding-left:20px">Công việc mức độ 4</td>
+                                @for (int i = 0; i < 12; i++)
+                                {
+                                    <td class="bg-success-subtle text-end" style="color:green;">@Model.TasksInMonth[i].Completed_PriorityPercent[3].ToString("#,##0")%</td>
+                                }
+                            </tr>
+                            <tr>
+                                <td class="bg-success-subtle" style="color:green;">V.5</td>
+                                <td class="bg-success-subtle" style="color:green; font-weight:bold; font-style:italic; padding-left:20px">Công việc mức độ 5</td>
+                                @for (int i = 0; i < 12; i++)
+                                {
+                                    <td class="bg-success-subtle text-end" style="color:green;">@Model.TasksInMonth[i].Completed_PriorityPercent[4].ToString("#,##0")%</td>
+                                }
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

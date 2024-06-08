@@ -1,0 +1,20 @@
+﻿@page
+@model TNS_WebApp.Pages.Guide.WatchingModel
+@{
+}
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <a href="~/Guide/Index"><img src="~/images/return-88.png" style="width:24px" /></a>
+           
+        </div>
+        <div class="row text-center">
+            <video controls="controls"  autoplay loop muted>
+                <source src="~/images/guide/@Model.GuiderFileVideo" type="video/mp4" />
+            </video>
+        </div>
+       <div>
+            <h4 class="mb-0">@Model.GuideName</h4>
+       </div>
+    </div>
+</div>

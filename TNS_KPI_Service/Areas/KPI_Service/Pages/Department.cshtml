@@ -1,0 +1,394 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Service.Pages.DepartmentModel
+@{
+}
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Service/Submenu" style="text-decoration:none; color:#4c4c4c">Dịch vụ</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Report</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:22px; font-weight:bold">
+        KPI BỘ PHẬN
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-2 text-end">
+    </div>
+    <div class="col-8 text-center text-primary">
+        <div class="md-3">
+            <div class="input-group">
+                <input id="txt_DepartmentID" value="PGD-DN" type="text" class="form-control w-auto" placeholder="User IPCAS">
+                <button class="btn btn-secondary" onclick="Modal_Selected_Ajax()">
+                    ...
+                </button>
+                <select id="YearView" class="form-select w-auto">
+                    @for (int i = 2020; i < 2025; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <button id="btn_Search" class="btn btn-primary" onclick="LV_LoadService_Ajax()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-2 text-end">
+    </div>
+</div>
+
+<div class="row">
+    <canvas id="Chart_A" width="1000" height="250"></canvas>
+</div>
+
+<div style="width:100%;">
+    <div class="row">
+        <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; ">
+            <thead id="LV_DataHeader">
+            </thead>
+
+            <tbody id="LV_DataBody">
+            </tbody>
+
+        </table>
+        <div id="LV_Waiting" style="display:none">
+            <div class='text-center'>
+                <div class='spinner-border text-primary m-5' role='status'>
+                    <span class='sr-only'>Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Selected_Form" tabindex="-1" aria-labelledby="Modal_Selected_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Selected_Title">Chọn nhân viên </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Selected_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Selected_lbl_ItemIndex"></div>
+                            <div id="Modal_Selected_lbl_ItemKey"></div>
+                            <div id="Modal_Selected_lbl_UnitKey"></div>
+                        </div>
+
+                    </div>
+                    <div id="Modal_Selected_Panel"></div>
+                    <div id="Modal_Selected_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="Modal_PhuLucItem_Form" tabindex="-1" aria-labelledby="Modal_PhuLucItem_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_PhuLucItem_Title">Chi tiết  </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_PhuLucItem_Body" class="mb-3 row">
+                        <div style="display:none">
+                        </div>
+
+                    </div>
+                    <div id="Modal_PhuLucItem_Panel">
+                        <table id="Modal_PhuLucItem_LV" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead id="Modal_PhuLucItem_LV_Header">
+                            </thead>
+
+                            <tbody id="Modal_PhuLucItem_LV_Body">
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div id="Modal_PhuLucItem_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script src="~/libs/chart.js/chartjs.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#YearView option')[3].selected = true;
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+
+</script>
+
+<script>
+    var _DataView;
+    var _IndexBegin = 2;
+    var _IndexEnd = 8;
+    function LV_LoadService_Ajax() {
+      //  Modal_Selected_Ajax();
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+
+        var zDepartmentID = $("#txt_DepartmentID").val();
+        var zYearView = $('#YearView').find(":selected").val();
+
+        var zDataRequest = { "departmentID": zDepartmentID, "yearView": zYearView };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Service/Department?handler=LoadService",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                _DataView = dataResponse;
+                LV_Display_Service();
+                Chart_Display();
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_Display_Service() {
+        var zContent = "";
+        var zHeader = "";
+        var k = 0;
+        var zStyle_RecordView = "";
+        var zYearView = $('#YearView').find(":selected").val();
+
+        zHeader += "<tr>";
+        zHeader += "<th colspan = '10' class='text-end'>";
+        zHeader += "    <div class='btn-group' role = 'group' aria-label='' >";
+        zHeader += "        <button type='button' class='btn btn-primary uil-angle-double-left' onclick='LV_DisplayDataPreNext(0)'> </button>";
+        zHeader += "        <button type='button' class='btn btn-primary uil-angle-double-right' onclick='LV_DisplayDataPreNext(1)'></button>";
+        zHeader += "    </div>";
+        zHeader += "</th>";
+        zHeader += "</tr>";
+        zHeader += "<tr>";
+        zHeader += "<th class='text-center bg-primary text-light align-middle' style='width:50px'>STT</th>";
+        zHeader += "<th class='text-center bg-primary text-light align-middle' style='width:350px'>Tiêu chí</th>";
+        for (h = _IndexBegin; h < _IndexEnd; h++) {
+            zHeader += "<th class='text-center bg-primary text-light'> Tháng " + (h - 1) + "</th>";
+        }
+        zHeader += "<th class='text-center bg-warning text-light'> Năm " + zYearView + "</th>";
+        zHeader += "</tr>";
+        var n = _DataView.length;
+        for (i = 0; i < n; i++) {
+            var zNo = "";
+            zStyle_RecordView = "";
+            if (_DataView[i][0] == "I" || _DataView[i][0] == "II" || _DataView[i][0] == "III")
+            {
+                zNo = _DataView[i][0];
+                zStyle_RecordView = "font-weight:bold; background:#b4fff7";
+            }
+            else
+            {
+                if (_DataView[i][0].substring(0, 2) == "II")
+                    zNo = _DataView[i][0].substring(2, 3);
+                else
+                    zNo = _DataView[i][0].substring(1, 3);
+            }
+          
+            zContent += "       <tr>";
+            zContent += "           <td style='" + zStyle_RecordView + "'>" + zNo + "</td>";
+            zContent += "           <td style='" + zStyle_RecordView + "'>" + _DataView[i][1] + " </td>";
+            for (j = _IndexBegin; j < _IndexEnd; j++) {
+                zContent += "           <td class='text-end' style='" + zStyle_RecordView + "'>" + _DataView[i][j] + "</td>";
+            }
+            zContent += "           <td class='text-end' style='" + zStyle_RecordView + "'><b>" + _DataView[i][14] + "</b></td>";
+            zContent += "       </tr>";
+
+
+        }
+        $("#LV_DataHeader").html(zHeader);
+        $("#LV_DataBody").html(zContent);
+       // $("#txt_MessageLog").text(zContent);
+
+    }
+    function LV_DisplayDataPreNext(action) {
+        // alert(action);
+        if (action == 1) {
+            if (_IndexEnd < 14) {
+                _IndexBegin++;
+                _IndexEnd++;
+            }
+
+        }
+        if (action == 0) {
+            if (_IndexBegin > 2) {
+                _IndexBegin--;
+                _IndexEnd--;
+            }
+        }
+        LV_Display_Service();
+    }
+</script>
+<script>
+    var _Labels = ['01', '02', '03', '04','05', '06', '07', '08','09', '10', '11', '12'];
+  
+    var Chart_KPI_A = new Chart(document.getElementById('Chart_A'), {
+        type: 'line',
+        data: {
+            labels: _Labels,
+            datasets: [{
+                label: '# Sản phẩm dịch vụ',
+                borderWidth: 1,
+                tension: 0.4
+            }, {
+                label: '# Thu chi nội bộ',
+                borderWidth: 1,
+                tension: 0.4
+            }, {
+                label: '# POS',
+                borderWidth: 1,
+                tension: 0.4
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'THU DỊCH VỤ',
+                    padding: {
+                        top: 5,
+                        bottom: 5
+                    }
+                }
+            }
+        }
+    });
+    function Chart_Display() {
+        var zData_Item_I = [];
+        var zData_Item_II = [];
+        var zData_Item_III = [];
+        var n = _DataView.length;
+        for (i = 0; i < n; i++) {
+            if(_DataView[i][0] == "I")
+            {
+                for (j = 2; j < 14; j++) {
+                    zData_Item_I[j - 2] = _DataView[i][j].replaceAll(',', '');
+                }
+            }
+            if (_DataView[i][0] == "II") {
+                for (j = 2; j < 14; j++) {
+                    zData_Item_II[j - 2] = _DataView[i][j].replaceAll(',', '');
+                }
+            }
+            if (_DataView[i][0] == "III") {
+                for (j = 2; j < 14; j++) {
+                    zData_Item_III[j - 2] = _DataView[i][j].replaceAll(',', '');
+                }
+            }
+        }
+        Chart_KPI_A.data.datasets[0].data = zData_Item_I;
+        Chart_KPI_A.data.datasets[1].data = zData_Item_II;
+        Chart_KPI_A.data.datasets[2].data = zData_Item_III;
+        Chart_KPI_A.update();
+       
+    }
+</script>
+<script>
+    function Modal_Selected_Ajax() {
+        var zYearView = $('#YearView').find(":selected").val();
+        var zDataRequest = { "yearView": zYearView };
+
+        $("#Modal_Selected_Title").text("Chọn bộ phận xem trong " + zYearView);
+        $("#Modal_Selected_Form").modal('show');
+        $("#Modal_Selected_Waiting").css("display", "");
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Service/Department?handler=CollectData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                Modal_DisplayData(dataResponse);
+        //        alert(dataResponse);
+                $("#Modal_Selected_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function Modal_DisplayData(dataview) {
+        var zStyle_RecordView = "";
+        //$("#Modal_Selected_Panel").html(JSON.stringify(dataview));
+        var n = dataview.length;
+        var zContent = "";
+        for (i = 0; i < n; i++) {
+            zContent += "<div class='row'>";
+            zContent += "   <div class='col-12'>";
+            zContent += "       <div class='input-group mb-2'>";
+            zContent += "           <span class='input-group-text' style='width:120px'> " + dataview[i][0] + "</span>";
+            zContent += "           <input type='text' class='form-control' value='" + dataview[i][2] + "' aria-label='' aria-describedby='button-addon2' > ";
+            zContent += "           <button class='btn btn-primary' onclick='Modal_btn_Click(\"" + dataview[i][0] + "\")'><i class='uil-eye'> </i> </button>";
+            zContent += "       </div>";
+            zContent += "  </div>";
+            zContent += "</div>";
+        }
+        $("#Modal_Selected_Panel").html(zContent);
+    }
+    function Modal_btn_Click(ID) {
+
+        $("#txt_DepartmentID").val(ID);
+        $("#Modal_Selected_Form").modal('hide');
+    }
+</script>

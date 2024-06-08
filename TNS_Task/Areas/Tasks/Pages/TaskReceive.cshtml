@@ -1,0 +1,479 @@
+﻿@page
+@model TNS_Task.Areas.Tasks.Pages.TaskReceiveModel
+@{
+}
+<style>
+    .tns-field-name {
+        width: 140px;
+    }
+</style>
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Công việc</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:26px; font-weight:bold">
+        DANH SÁCH CÔNG VIỆC ĐƯỢC GIAO
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-10">
+        <div>
+            <div class="input-group">
+                <input id="txt_Search" type="text" class="form-control w-auto" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="button-addon2">
+                <input id="txt_FromDate" class="form-control" type="date">
+                <input id="txt_ToDate" class="form-control" type="date">
+                <select id="Status" class="form-select w-sm">
+                    <option value="All">Tất cả</option>
+                    @foreach (TNS_Task.Areas.Tasks.Models.TN_Item zItem in Model.TodoStatus)
+                    {
+                        <option value="@zItem.Value">@zItem.Name</option>
+                    }
+
+                </select>
+                <button class="btn btn-primary" onclick="btn_Search_Click()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div style="color:maroon; font-weight:bold; padding-left:10px">
+            <div id="Info_View"></div>
+        </div>
+
+    </div>
+    <div class="col-md-2 text-end">
+      
+
+    </div>
+</div>
+
+<div class="row">
+    <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+        <thead>
+            <tr>
+                <th class="text-center text-light bg-info" style="width:100px">STT</th>
+                <th class="text-center text-light bg-info" style="width:150px">Ngày giao</th>
+                <th class="text-center text-light bg-info" style="width:150px">Người giao</th>
+                <th class="text-center text-light bg-info">Công việc</th>
+                <th class="text-center text-light bg-info" style="width:120px">Hạn chót</th>
+                <th class="text-center text-light bg-info" style="width:120px">Mức độ</th>
+                <th class="text-center text-light bg-info" style="width:120px">Tình trạng</th>
+                <th class="text-center text-light bg-info"></th>
+            </tr>
+        </thead>
+
+        <tbody id="LV_DataBody">
+            <tr style="cursor:pointer" onclick="ModalShowCreate_Show()">
+                <td>1</td>
+                <td>10/10/2023</td>
+                <td>Nguyễn văn A</td>
+                <td>Thẩm định hồ sơ</td>
+                <td>15/10/2023</td>
+                <td>Cao</td>
+                <td>20%</td>
+                <td></td>
+            </tr>
+            <tr style="cursor:pointer" onclick="ModalShowCreate_Show()">
+                <td>2</td>
+                <td>12/10/2023</td>
+                <td>Trần văn B</td>
+                <td>Lập hồ sơ vay vốn</td>
+                <td>30/10/2023</td>
+                <td>Trung bình</td>
+                <td>80%</td>
+                <td></td>
+            </tr>
+        </tbody>
+
+    </table>
+    <div id="LV_Waiting" style="display:none">
+        <div class='text-center'>
+            <div class='spinner-border text-primary m-5' role='status'>
+                <span class='sr-only'>Loading...</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+<div id="Modal_Area">
+    <div class="modal fade" id="ModalFormCreate" tabindex="-1" aria-labelledby="ModalFormCreate_Label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="ModalFormCreate_Body" class="mb-3 row">
+                        <div id="ModalFormCreate_Key" style="display:none"></div>
+                        <div id="ModalFormCreate_Index" style="display:none"></div>
+                        <div style="height:400px">
+                            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#TaskContent" role="tab">
+                                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                        <span class="d-none d-sm-block"><b>Công việc được giao</b></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#UserDelivery" role="tab">
+                                        <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                        <span class="d-none d-sm-block"><b>Thực hiện công việc được giao</b></span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                            <div class="tab-content p-3 text-muted">
+                                <div class="tab-pane active" id="TaskContent" role="tabpanel">
+                                    <div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Công việc </span>
+                                                    <input id="ModalFormCreate_txtSubject" type="text" class="form-control" aria-label="Content">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Code </span>
+                                                    <input id="ModalFormCreate_txtTaskCode" type="text" class="form-control w-25" aria-label="Content">
+                                                    <input id="ModalFormCreate_txtCodeName" type="text" class="form-control w-50" aria-label="Content">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Hạn chót</span>
+                                                    <input id="ModalFormCreate_dtlDueDate" class="form-control" type="text">
+                                                </div>
+
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Mức độ </span>
+                                                    <input id="ModalFormCreate_dtlDueDate" class="form-control" type="text">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Điểm kế hoạch </span>
+                                                    <input id="ModalFormCreate_txtScoresTarget" type="text" class="form-control" aria-label="Grade">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name"> Người giao </span>
+                                                    <input id="ModalFormCreate_txtScoresResult" type="text" class="form-control" aria-label="Grade">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <textarea class="form-control" id="ModalFormCreate_txtTaskContent" rows="6"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="UserDelivery" role="tabpanel">
+                                    <div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Công việc </span>
+                                                    <input id="ModalFormCreate_txtSubject" type="text" class="form-control" aria-label="Content">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Code </span>
+                                                    <input id="ModalFormCreate_txtTaskCode" type="text" class="form-control w-25" aria-label="Content">
+                                                    <input id="ModalFormCreate_txtCodeName" type="text" class="form-control w-50" aria-label="Content">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Ngày bắt đầu</span>
+                                                    <input id="ModalFormCreate_dtlDueDate" class="form-control" type="datetime-local">
+                                                </div>
+
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name">Ngày hoàn thành </span>
+                                                    <input id="ModalFormCreate_dtlDueDate" class="form-control" type="datetime-local">
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                           
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name"> Tình trạng </span>
+                                                    <select id="ModalFormCreate_cboPrority" class="form-select w-sm">
+                                                        @for (int i = 0; i < 100; i = i + 10)
+                                                        {
+                                                            <option value="@i">@i%</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text tns-field-name"> Điểm thực hiện </span>
+                                                    <input id="ModalFormCreate_txtScoresTarget" type="text" class="form-control" aria-label="Grade">
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <textarea class="form-control" id="ModalFormCreate_txtTaskContent" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="ModalFormCreate_Waiting" style="display:none">
+                                <div class='spinner-border text-primary m-1' role='status'>
+                                    <span class='sr-only'>Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"> </div>
+                        <div class="col-6 text-end">
+                            <button type="button" id="ModalFormCreate_btnSave" class="btn btn-primary" onclick="ModalFormCreate_Save()">Save</button>
+                        </div>
+                    </div>
+                    <div id="ModalFormCreate_Error" style="display:none; color:red">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="ListView_ModalForm" tabindex="-1" aria-labelledby="ListView_ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ListView_ModalTitle">thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+</script>
+
+<script>
+    function btn_Search_Click() {
+        //LV_LoadData_Ajax();
+
+    }
+    function LV_LoadData_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+        //var zMonth = $('#Month_View').find(":selected").val();
+        //var zTRCD = $('#TRCD_View').find(":selected").val();
+        var zSearchContent = $("#txt_Search").val();
+        //alert(zMonth + ":" + zTRCD + ":" + zSearchContent);
+        var zDataRequest = { "searchContent": zSearchContent };
+
+        $.ajax({
+            type: 'POST',
+            url: "/Tasks/TaskDelivery?handler=LoadData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                LV_DisplayData(dataResponse);
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_DisplayData(dataview) {
+        var zStyle_RecordView = "";
+        var n = dataview.length;
+        var zContent = "";
+
+        if (dataview[0].id == "ERROR") {
+            $("#txt_MessageLog").html(dataview[i].name);
+        }
+        else {
+            $("#Info_View").text(dataview[0].name);
+
+            for (i = 1; i < n; i++) {
+                zContent += "       <tr>";
+                zContent += "           <td >";
+                zContent += "               <div> " + i + " </div>";
+                zContent += "           </td>";
+                zContent += "           <td>" + dataview[i].startDate + "</td>";
+                zContent += "           <td>" + dataview[i].subject + "</td>";
+                zContent += "           <td>" + dataview[i].dueDate + "</td>";
+                zContent += "           <td>" + dataview[i].priorityName + "</td>";
+                zContent += "           <td>" + dataview[i].statusName + "</td>";
+                zContent += "           <td>" + dataview[i].complete + "</td>";
+                zContent += "           <td>" + "</td>";
+                zContent += "       </tr>";
+            }
+            $("#LV_DataBody").html(zContent);
+        }
+    }
+</script>
+<script>
+    function ModalShowCreate_Show() {
+
+        $("#ModalFormCreate").modal('show');
+        // $("#ListView_ModalForm").modal('show');
+
+    }
+
+    function ModalFormCreate_Save() {
+        var zAutoKey = $("#ModalFormCreate_lbl_Key").text();
+        var zIndex = $("#ModalFormCreate_lbl_Index").text();
+
+        var zSubject = $("#ModalFormCreate_txtSubject").val();
+        var zTaskCode = $("#ModalFormCreate_txtTaskCode").val();
+        var zTaskCodeName = $("#ModalFormCreate_txtCodeName").val();
+        var zDueDate = $("#ModalFormCreate_dtlDueDate").val();
+        var zPriorityKey = $("#ModalFormCreate_cboPrority").find(":selected").val();
+        var zPriorityName = $("#ModalFormCreate_cboPrority option:selected").text();
+        var zScoresTarget = $("#ModalFormCreate_txtScoresTarget").val();
+        var zScoresResult = $("#ModalFormCreate_txtScoresResult").val();
+        var zTaskContent = $("#ModalFormCreate_txtTaskContent").val();
+
+        var zDataRequest = {
+            "subject": zSubject,
+            "taskCode": zTaskCode,
+            "taskCodeName": zTaskCodeName,
+            "dueDate": zDueDate,
+            "priorityKey": zPriorityKey,
+            "priorityName": zPriorityName,
+            "scoresTarget": zScoresTarget,
+            "scoresResult": zScoresResult,
+            "taskContent": zTaskContent
+        };
+
+        $("#ModalFormCreate_Waiting").css("display", "");
+        $("#ModalFormCreate_btnSave").css("display", "none");
+        $("#txt_MessageLog").html(JSON.stringify(zDataRequest));
+
+        $("#ModalFormCreate_Waiting").css("display", "none");
+        $("#ModalFormCreate_btnSave").css("display", "");
+        $("#ModalFormCreate").modal('hide');
+
+
+    }
+
+</script>
+<script>
+    var _DataUserDelivery = [];
+    function Modal_Update_btnSearchEmployee_Click() {
+        var zWaiting = "<div class='text-center'>";
+        zWaiting += "<div class='spinner-border text-primary spinner-border-sm' role='status'>";
+        zWaiting += " <span class='sr-only'>Loading...</span>";
+        zWaiting += "</div></div>";
+        $("#Modal_Update_btnSearchEmployee").html(zWaiting);
+
+        var zContent = $("#Modal_Update_txt_Search").val();
+        var zDataRequest = { "searchContent": zContent };
+
+        var zImg = '/images/waiting.gif';
+        $.ajax({
+            type: 'POST',
+            url: "/Tasks/TaskDelivery?handler=SearchEmployee",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                if (dataResponse.id != "ERROR") {
+                    var n = dataResponse.dataOfTable.length;
+                    var k = dataResponse.dataOfTable[0].length;
+                    var zItem = [];
+                    for (i = 0; i < n; i++) {
+                        zItem = [];
+                        for (j = 0; j < k; j++) {
+                            zItem[j] = dataResponse.dataOfTable[i][j];
+                        }
+                        _DataUserDelivery.push(zItem);
+                    }
+                    LV_DisplayEmployee();
+                }
+                else {
+                    $("#txt_MessageLog").html(dataResponse.name);
+                }
+                $("#Modal_Update_btnSearchEmployee").html(" <i class='fas fa-search'></i>");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_DisplayEmployee() {
+        var zStyle_RecordView = "";
+        var n = _DataUserDelivery.length;
+
+        var zContent = "";
+        for (i = 0; i < n; i++) {
+            zContent += "       <tr style='cursor:pointer' onclick='LV_RemoveEmployee(" + i + ")'>";
+            zContent += "           <td >";
+            zContent += "               <div> " + (i + 1).toString() + " </div>";
+            zContent += "           </td>";
+            zContent += "           <td>" + _DataUserDelivery[i][2] + "</td>";
+            zContent += "           <td>" + _DataUserDelivery[i][4] + "</td>";
+            zContent += "           <td></td>";
+            zContent += "       </tr>";
+        }
+        $("#LV_UserDeliveryBody").html(zContent);
+    }
+    function LV_RemoveEmployee(Index) {
+        _DataUserDelivery.splice(Index, 1);
+        LV_DisplayEmployee();
+    }
+</script>

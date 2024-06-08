@@ -1,0 +1,349 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Debit.Pages.DebitHistory_UpdateModel
+@{
+}
+<style>
+    .tns-field-name {
+        width: 150px;
+    }
+</style>
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Debit/Submenu" style="text-decoration:none; color:#4c4c4c">Dư nợ</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Điều chỉnh tài khoản</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:26px; font-weight:bold">
+        ĐIỀU CHỈNH TÀI KHOẢN DƯ NỢ
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div>
+            <div class="input-group">
+                <input id="txt_Search" type="text" class="form-control w-auto" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="button-addon2">
+                <select id="Month_View" class="form-select w-sm">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        var zVal = @i.ToString().PadLeft(2, '0') + "-2023";
+                        <option value="@zVal">@zVal</option>
+                    }
+                </select>
+                <button class="btn btn-primary" onclick="btn_Search_Click()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div style="color:maroon; font-weight:bold; padding-left:10px">
+            <div id="Info_View"></div>
+        </div>
+
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Mã Khách Hàng</th>
+                        <th class="text-center">Tên Khách Hàng</th>
+                     
+                        <th class="text-center">Số nợ</th>
+                        <th class="text-center">Giao dịch tại</th>
+                        <th class="text-center">Hội sở/Phòng</th>
+                        <th class="text-center">Nhân viên</th>
+                    </tr>
+                </thead>
+
+                <tbody id="LV_DataBody">
+                </tbody>
+
+            </table>
+            <div id="LV_Waiting" style="display:none">
+                <div class='text-center'>
+                    <div class='spinner-border text-primary m-5' role='status'>
+                        <span class='sr-only'>Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Update_Form" tabindex="-1" aria-labelledby="Modal_Update_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Update_Title">Cập nhật thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Update_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Update_lbl_ItemKey"></div>
+                        </div>
+                        <table style=" border-collapse: separate;border-spacing: 1em;">
+                            <tr>
+                                <td class="tns-field-name">Mã Customer</td>
+                                <td>
+                                    <span id="Modal_Update_lbl_ItemID" style="font-weight:bold;color:navy"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tns-field-name">Tên Customer</td>
+                                <td>
+                                    <span id="Modal_Update_lbl_ItemName" style="font-weight:bold;color:navy"></span>
+                                </td>
+                            </tr>
+                           
+                            <tr>
+                                <td class="tns-field-name">Số nợ</td>
+                                <td>
+                                    <div id="Modal_Update_lbl_Money" style="font-weight:bold;color:navy"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tns-field-name">Giao dịch tại</td>
+                                <td>
+                                    <div id="Modal_Update_lbl_TRCD" style="font-weight:bold;color:navy"></div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="row">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text tns-field-name">Đơn vị KPI </span>
+                                <select id="Modal_Update_cbo_Departments" class="form-select w-sm">
+                                    <option value="None">Chọn đơn vị</option>
+                                    @foreach (string[] zItem in Model.Departments)
+                                    {
+                                        <option value="@zItem[1]">@zItem[2]</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text tns-field-name">Mã nhân viên</span>
+                                <input id="Modal_Update_txt_EmployeeID" type="text" class="form-control" aria-label="Plan">
+                                <button class="btn btn-primary" id="Modal_Update_btnSearchEmployee" onclick="Modal_Update_btnSearchEmployee_Click()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text tns-field-name">Tên nhân viên</span>
+                                <input id="Modal_Update_txt_EmployeeName" type="text" class="form-control" aria-label="Plan">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="Modal_Update_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button id="Modal_Update_btnSave" type="submit" class="btn btn-primary" onclick="Modal_Update_btnSave_Click()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+</script>
+
+<script>
+    var _Dataview;
+    function btn_Search_Click() {
+        LV_LoadData_Ajax();
+
+    }
+    function LV_LoadData_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+
+        var zMonth = $('#Month_View').find(":selected").val();
+        var zSearchContent = $("#txt_Search").val();
+        //alert(zMonth + ":" + zTRCD + ":" + zSearchContent);
+        var zDataRequest = { "monthView": zMonth, "searchContent": zSearchContent };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Debit/DebitHistory_Update?handler=LoadData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                _Dataview = dataResponse;
+                LV_DisplayData();
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_DisplayData() {
+        var zStyle_RecordView = "";
+        var n = _Dataview.length;
+        var zContent = "";
+
+        if (_Dataview[0].id == "ERROR") {
+            $("#txt_MessageLog").html(_Dataview[i].name);
+        }
+        else {
+            $("#Info_View").text(_Dataview[0].name);
+
+            for (i = 1; i < n; i++) {
+                zContent += "       <tr style='cursor:pointer' onclick='Modal_UpdateShow(" + i + ",\"" + _Dataview[i].key + "\")' >";
+                zContent += "           <td >";
+                zContent += "               <div> " + i + " </div>";
+                zContent += "           </td>";
+                zContent += "           <td>" + _Dataview[i].id + "</td>";
+                zContent += "           <td>" + _Dataview[i].name + "</td>";
+             //   zContent += "           <td>" + _Dataview[i].accountNumber + "</td>";
+                zContent += "           <td class='text-end'>" + _Dataview[i].money + "</td>";
+                zContent += "           <td>" + _Dataview[i].trcd + "</td>";
+                zContent += "           <td>" + _Dataview[i].departmentID + "</td>";
+                zContent += "           <td>" + _Dataview[i].employeeName + "</td>";
+                zContent += "       </tr>";
+            }
+            $("#LV_DataBody").html(zContent);
+        }
+    }
+</script>
+<script>
+    function Modal_UpdateShow(Index, AutoKey) {
+
+        $("#Modal_Update_lbl_ItemKey").text(AutoKey);
+        $("#Modal_Update_lbl_ItemID").text(_Dataview[Index].id);
+        $("#Modal_Update_lbl_ItemName").text(_Dataview[Index].name);
+     //   $("#Modal_Update_lbl_AccountNumber").text(_Dataview[Index].accountNumber);
+        $("#Modal_Update_lbl_Money").text(_Dataview[Index].money);
+        $("#Modal_Update_txt_EmployeeID").val(_Dataview[Index].employeeID);
+        $("#Modal_Update_txt_EmployeeName").val(_Dataview[Index].employeeName);
+        if (_Dataview[Index].departmentID.length > 0)
+            $("#Modal_Update_cbo_Departments").val(_Dataview[Index].departmentID).change();
+        else {
+            //alert(_Dataview[Index].departmentID.length);
+            $("#Modal_Update_cbo_Departments").val("None").change();
+        }
+        $("#Modal_Update_lbl_TRCD").text(_Dataview[Index].trcd);
+
+        $("#Modal_Update_Form").modal('show');
+
+    }
+
+    function Modal_Update_btnSearchEmployee_Click() {
+        var zWaiting = "<div class='text-center'>";
+        zWaiting += "<div class='spinner-border text-primary spinner-border-sm' role='status'>";
+        zWaiting += " <span class='sr-only'>Loading...</span>";
+        zWaiting += "</div></div>";
+        $("#Modal_Update_btnSearchEmployee").html(zWaiting);
+
+        var zEmployeeID = $("#Modal_Update_txt_EmployeeID").val();
+        var zDataRequest = { "searchContent": zEmployeeID };
+
+        var zImg = '/images/waiting.gif';
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Debit/DebitHistory_Update?handler=SearchEmployee",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                if (dataResponse.id == "ERROR") {
+                    $("#Modal_Update_txt_EmployeeName").val("Không có nhân viên này !");
+                }
+                else {
+                    $("#Modal_Update_txt_EmployeeName").val(dataResponse.name);
+                }
+                $("#Modal_Update_btnSearchEmployee").html(" <i class='fas fa-search'></i>");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function Modal_Update_btnSave_Click() {
+        var zWaiting = "<div class='text-center'>";
+        zWaiting += "<div class='spinner-border text-primary spinner-border-sm' role='status'>";
+        zWaiting += " <span class='sr-only'>Loading...</span>";
+        zWaiting += "</div></div>";
+        $("#Modal_Update_btnSave_Click").html(zWaiting);
+
+        var zAutoKey = $("#Modal_Update_lbl_ItemKey").text();
+        var zEmployeeID = $("#Modal_Update_txt_EmployeeID").val();
+        var zDepartmentID = $('#Modal_Update_cbo_Departments').find(":selected").val();
+        var zDataRequest = { "key": zAutoKey, "employeeID": zEmployeeID, "departmentID": zDepartmentID };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_BankAccount/BankAccountHistory_Update?handler=Save",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                if (dataResponse.id != "OK") {
+                    alert(dataResponse.id);
+                }
+                else
+                {
+                    LV_LoadData_Ajax();
+                }
+                $("#Modal_Update_Form").modal('hide');
+                $("#Modal_Update_btnSave_Click").html("Save");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+
+</script>

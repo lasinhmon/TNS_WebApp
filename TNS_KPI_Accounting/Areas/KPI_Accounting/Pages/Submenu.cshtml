@@ -1,0 +1,119 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.SubmenuModel
+@{
+}
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Kế Toán </span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <b>Công việc kế toán</b>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/Calendar" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Trực quầy</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/EntryScores" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-users-alt md-2"></i> Điểm số bút toán nhân viên</h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="#" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-angle-double-right md-2"></i>Điểm số bút toán theo tháng</h6>
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/NguonVon" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-angle-double-right md-2"></i>Nguồn vốn tạm thời </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/DuNo" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-angle-double-right md-2"></i>Dư nợ tạm thời </h6>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <b>Dữ liệu tính toán</b>
+            </div>
+            <ul class="list-group list-group-flush">
+               
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/Agritax" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-growth md-2"></i> Thuế liên ngân hàng </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/HauKiemBT" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-line md-2"></i> Hậu kiểm bút toán</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/HauKiemBT_Phub" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-line md-2"></i> Hậu kiểm bút toán PHUB</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/HauKiemBT_None" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-line md-2"></i> Hậu kiểm không bút toán </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/Calendar_Admin" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-receipt-alt md-2"></i> Danh sách trực quầy</h6>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-secondary">
+            <div class="card-header bg-secondary text-white">
+                <b>Quản trị</b>
+            </div>
+            <ul class="list-group list-group-flush">
+                
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/EntryScores_Admin" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-receipt-alt md-2"></i> Điểm số bút toán</h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/Personal" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-line md-2"></i> Kết quả theo nhân viên </h6>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/PhuLuc" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-line md-2"></i> Phụ lục </h6>
+                    </a>
+                </li>
+                
+                <li class="list-group-item">
+                    <a href="~/KPI_Accounting/ReportUserItem" style="text-decoration:none; color:#313131">
+                        <h6><i class="uil uil-chart-line md-2"></i> Kết quả bút toán </h6>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>

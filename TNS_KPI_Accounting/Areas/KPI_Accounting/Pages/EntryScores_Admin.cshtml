@@ -1,0 +1,690 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.EntryScores_AdminModel
+@{
+
+}
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+
+<style>
+    .tns-field-name {
+        width: 210px;
+    }
+</style>
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/Index" style="text-decoration:none;  color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Accounting/SubMenu" style="text-decoration:none; color:#4c4c4c">Kế toán</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Bảng điểm kế toán</span>
+    </div>
+</div>
+<div class="row text-center">
+    <div style="width:100%; font-weight:bold;font-size:30px">BẢNG ĐIỂM BÚT TOÁN KẾ TOÁN</div>
+</div>
+<div style="height:10px"></div>
+<div class="row mb-3">
+    <div class="col-10 text-center">
+        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <button type="button" class="btn btn-success uil-angle-double-left" onclick="LV_LoadData_Ajax('Pre')"> </button>
+            <button type="button" class="btn btn-outline-success" style="width:200px" id="txt_MonthCurrent" onclick="LV_LoadData_Ajax('Now')">01-2023</button>
+            <button type="button" class="btn btn-success uil-angle-double-right" onclick="LV_LoadData_Ajax('Next')"> </button>
+        </div>
+    </div>
+    <div class="col-2 float-md-end">
+        @if (Model.UserLogin.Role.IsAdd)
+        {
+            <button onclick="Modal_Update_Show(0,'New')" class="btn btn-primary waves-effect waves-light">Thêm mới</button>
+        }
+    </div>
+</div>
+<div style="width:100%;overflow: auto;">
+    <table id="datatable-grid" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 3500px;font-size:14px">
+        <thead>
+            <tr>
+
+                <th class="text-center bg-primary text-light align-middle" style="width:80px"> Xếp hạng </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:80px"> User </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:200px"> Họ và tên </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Bút toán <br />thực hiện </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Bút toán <br />hủy </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Bút toán <br />Agritax </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> BT không <br />hạch toán </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Bút toán <br />PHUB  </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Hậu kiểm <br />bút toán </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px"> Điểm cộng gdv phụ trách <br />quản lý atm; sổ phụ, thẻ </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Hệ số <br />công việc GDV </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:130px"> Hệ số <br />công việc GDV </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px"> BQ BT GDV KS & <br />Tổ trưởng phụ trách </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px"> Điểm thực hiện <br />bt của gdv </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px"> Điểm BT BQ/1gdv <br /> tại từng đơn vị</th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px"> Điểm BT BQ +/- so với <br /> điểm BT BQ của gdv</th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px">Tỷ lệ đạt so với điểm <br /> BT BQ của gdv </th>
+                <th class="text-center bg-primary text-light align-middle" style="width:150px"> Ghi chú </th>
+            </tr>
+            <tr>
+                <th class="text-center align-middle"> 1 </th>
+                <th class="text-center align-middle"> 2 </th>
+                <th class="text-center align-middle"> 3 </th>
+                <th class="text-center align-middle"> 4 </th>
+                <th class="text-center align-middle"> 5 </th>
+                <th class="text-center align-middle"> 6 </th>
+                <th class="text-center align-middle"> 7 </th>
+                <th class="text-center align-middle"> 8 </th>
+                <th class="text-center align-middle"> 9 </th>
+                <th class="text-center align-middle"> 10 </th>
+                <th class="text-center align-middle"> 11 </th>
+                <th class="text-center align-middle"> 12 </th>
+                <th class="text-center align-middle"> 13 </th>
+                <th class="text-center align-middle"> 14 </th>
+                <th class="text-center align-middle"> 15 </th>
+                <th class="text-center align-middle"> 16 </th>
+                <th class="text-center align-middle"> 17 </th>
+                <th class="text-center align-middle"> 18 </th>
+            </tr>
+        </thead>
+        <tbody id="LV_Data">
+        </tbody>
+    </table>
+</div>
+<div id="LV_Waiting" style="display:none">
+    <div class='text-center'>
+        <div class='spinner-border text-primary m-1' role='status'>
+            <span class='sr-only'>Loading...</span>
+        </div>
+        <div class="spinner-border text-secondary m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border text-success m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; width:800px">
+    </div>
+</div>
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Update_Form" tabindex="-1" aria-labelledby="Modal_Update_Label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Update_Title">Thông tin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div id="Modal_Update_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Update_lbl_ItemIndex"></div>
+                            <div id="Modal_Update_lbl_AutoKey"></div>
+                            <div id="Modal_Update_lbl_EmployeeKey"></div>
+                        </div>
+                        <div id="Modal_Update_Waiting" style="display:none">
+                            <div class='text-center'>
+                                <div class='spinner-border text-primary m-1' role='status'>
+                                    <span class='sr-only'>Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:none" id="Modal_Update_ViewInfo">
+                            <div id="Modal_Update_AddNew" class="row" style="display:none">
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text">Nhân viên</span>
+                                        <input id="Modal_Update_txt_EmployeeID" type="text" class="form-control" aria-label="Employee ID">
+                                        <button class="input-group-text" onclick="CollectInfo()">
+                                            <span id="Modal_Update_btn_Waiting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none"></span>
+                                            <span id="Modal_Update_btn_Search" class="uil-search-alt"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <select class="form-select" id="Modal_Update_sel_Employee">
+                                            <option value="None" selected>Choose...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Modal_Update_Edit" class="row" style="display:none">
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Mã Nhân viên</span>
+                                        <input id="Modal_Update_lbl_EmployeeID" type="text" class="form-control" aria-label="Employee ID">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Họ và Tên</span>
+                                        <input id="Modal_Update_lbl_EmployeeName" type="text" class="form-control" aria-label="Employee Name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="input-group mb-2">
+                                        <label class="input-group-text tns-field-name" for="Modal_Update_sel_Department">Bộ phận</label>
+                                        <select class="form-select" id="Modal_Update_sel_Department">
+                                            <option value="None" selected>Choose...</option>
+                                            @foreach (string[] zItem in Model.ListDepartment)
+                                            {
+                                                <option value="@zItem[0]">@zItem[1]</option>
+                                            }
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Số bút toán thực hiện</span>
+                                        <input id="Modal_Update_txt_AccountingEntry_Done" type="text" class="form-control text-end" value="0" aria-label="JAccounting Entry Done">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Số bút toán hủy</span>
+                                        <input id="Modal_Update_txt_AccountingEntry_Cancel" type="text" class="form-control text-end" value="0" aria-label="AccountingEntry Cancel">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Số bút toán Agritax</span>
+                                        <input id="Modal_Update_txt_AccountingEntry_Agritax" type="text" class="form-control text-end" value="0" aria-label="AccountingEntry Agritax">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Số BT không hạch toán</span>
+                                        <input id="Modal_Update_txt_AccountingEntry_None" type="text" class="form-control text-end" value="0" aria-label="Accounting Entry None">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Tổng số điểm quy đổi</span>
+                                        <input id="Modal_Update_txt_CoefficientTask" type="text" class="form-control text-end" value="0" aria-label="Coefficient Task">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Điểm cộng GDV</span>
+                                        <input id="Modal_Update_txt_Scores_AccountingEntry" type="text" class="form-control text-end" value="0" aria-label="Scores Accounting Entry">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name">Hệ số công việc GDV</span>
+                                        <input id="Modal_Update_txt_Scores_Plus" type="text" class="form-control text-end" value="0" aria-label="Scores Plus">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text tns-field-name"><b>Điểm thực hiện bút toán</b></span>
+                                        <input id="Modal_Update_txt_Scores_Total" type="text" class="form-control text-end" value="0" aria-label="Scores Total">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text ">Xếp hạng</span>
+                                        <input id="Modal_Update_txt_RankingInMonth" type="text" class="form-control text-end" value="0" aria-label="Ranking">
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text ">Ghi chú</span>
+                                        <input id="Modal_Update_txt_Note" type="text" class="form-control" aria-label="Note">
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button style="display:none" id="Modal_Update_btn_Save" type="submit" class="btn btn-primary" onclick="Modal_Update_Save()">Save</button>
+                        <button style="display:none" id="Modal_Update_btn_Del" type="submit" class="btn btn-primary" onclick="Modal_Update_Del()">Del</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="Modal_UploadFile_Form" tabindex="-1" aria-labelledby="Modal_UploadFile_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Update_Title">Upload file</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="inputGroupFile02">
+                        <button class="btn btn-success" type="submit" onclick="">Upload</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div style="display:none">
+</div>
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        LV_LoadData_Ajax("Now");
+    });
+   
+</script>
+<script>
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+    function LV_LoadData_Ajax(Action) {
+
+        var zMonthCurrent = $('#txt_MonthCurrent').text();
+        $("#Calendar_Waiting").css("display", "");
+
+        $("#LV_Waiting").css("display", "");
+        var zDataRequest = { "monthView": zMonthCurrent, "action": Action };
+        $("#LV_Data").html("");
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/EntryScores_Admin?handler=View",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                 $("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                LV_DisplayData(dataResponse);
+            })
+            .fail(function (error) {
+                alert(error.responseText);
+            });
+    }
+    function LV_DisplayData(DataView) {
+        var zStyle_RecordView = "";
+
+        var n = DataView.length;
+        var zContent = "";
+        var zContinuous = 1;
+        if (n == 1) {
+            if (DataView[0].id == "ERROR") {
+                zContinuous = 0;
+                $("#LV_Waiting").css("display", "none");
+                $("#txt_MessageLog").html(DataView[0].name);
+            }
+        }
+        if (zContinuous == 1) {
+            $('#txt_MonthCurrent').text(DataView[0].id);
+            //alert(DataView[0].id);
+            for (i = 1; i < n; i++) {
+                zContent += "       <tr id='LV_Index_" + i + "'>";
+                zContent += "           <td class='align-middle text-center' style='" + zStyle_RecordView + "'>" + DataView[i].rankingInMonth + "</td>";
+                zContent += "           <td class='align-middle' style='" + zStyle_RecordView + "' >";
+                zContent += "               <div> " + DataView[i].userName + " </div>";
+                zContent += "           </td>";
+                zContent += "           <td class='align-middle' style='" + zStyle_RecordView + "'>" + DataView[i].employeeName + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].accountingEntry_Done + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].accountingEntry_Cancel + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].accountingEntry_Agritax + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].accountingEntry_None + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].scores_AccountingEntry + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].scores_Plus + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].coefficientTask + "</td>";
+                zContent += "           <td class='align-middle text-end' style='" + zStyle_RecordView + "'>" + DataView[i].scores_Total + "</td>";
+                zContent += "           <td class='align-middle'>";
+                zContent += "               <div class='btn-group mr-2' role='group' aria-label='First group'>";
+                zContent += DataView[i].btnAction;
+                zContent += "               </div>";
+                zContent += "           </td>";
+                zContent += "       </tr>";
+            }
+            $("#LV_Waiting").css("display", "none");
+            $("#LV_Data").html(zContent);
+
+        }
+    }
+</script>
+<script>
+    function Modal_Update_Show(Index, Action) {
+        var zItemKey = "";
+
+        $("#Modal_Update_Form").modal('show');
+
+        $("#Modal_Update_ViewInfo").css("display", "none");
+        $("#Modal_Update_Waiting").css("display", "");
+
+        $("#Modal_Update_btn_Save").css("display", "none");
+        $("#Modal_Update_btn_Del").css("display", "none");
+        switch (Action) {
+            case "New":
+                $("#Modal_Update_Title").text("Tạo mới điểm bút toán nhân viên");
+                $("#Modal_Update_btn_Save").css("display", "");
+                $("#Modal_Update_ViewInfo").css("display", "");
+                $("#Modal_Update_Waiting").css("display", "none");
+                $("#Modal_Update_AddNew").css("display", "");
+                $("#Modal_Update_Edit").css("display", "none");
+                $("#Modal_Update_lbl_AutoKey").text("");
+                break;
+            case "Edit":
+                $("#Modal_Update_Title").text("Thay đổi điểm bút toán nhân viên");
+                $("#Modal_Update_btn_Save").css("display", "");
+                $("#Modal_Update_AddNew").css("display", "none");
+                $("#Modal_Update_Edit").css("display", "");
+                zItemKey = $("#LV_lbl_AutoKey_" + Index).text();
+
+                break;
+            case "Del":
+                $("#Modal_Update_Title").text("Xóa bút toán nhân viên");
+                $("#Modal_Update_btn_Del").css("display", "");
+                $("#Modal_Update_AddNew").css("display", "none");
+                $("#Modal_Update_Edit").css("display", "");
+                zItemKey = $("#LV_lbl_AutoKey_" + Index).text();
+
+                break;
+        }
+        if (Action != "New") {
+            var zDataRequest = { "autoKey": zItemKey };
+            $.ajax({
+                type: 'POST',
+                url: "/KPI_Accounting/EntryScores_Admin?handler=GetInfo",
+                data: JSON.stringify(zDataRequest),
+                contentType: "application/json",
+                dataType: "json",
+            })
+                .done(function (dataResponse) {
+                    Modal_Update_DisplayInfo(Index, Action, dataResponse);
+                    //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                })
+                .fail(function (error) {
+                    alert(error.responseText);
+                });
+        }
+
+    }
+    function Modal_Update_DisplayInfo(Index, Action, DataInfo) {
+        //$("#txt_MessageLog").html(JSON.stringify(DataInfo));
+        $("#Modal_Update_lbl_ItemIndex").text(Index);
+        $("#Modal_Update_lbl_AutoKey").text(DataInfo.key);
+
+        $("#Modal_Update_lbl_EmployeeID").val(DataInfo.employeeID);
+        $("#Modal_Update_lbl_EmployeeName").val(DataInfo.employeeName);
+
+        //$('#Modal_Update_sel_Employee').html("<option value='" + DataInfo.employeeKey + "' selected>" + DataInfo.employeeName + "</option>");
+        //$("#Modal_Update_txt_EmployeeID").val(DataInfo.employeeID);
+        //$("#Modal_Update_txt_EmployeeName").val(DataInfo.employeeName);
+
+        if (DataInfo.departmentKey.length == 36)
+            $('#Modal_Update_sel_Department').val(DataInfo.departmentKey);
+        else
+            $('#Modal_Update_sel_Department').val("None");
+
+
+        $("#Modal_Update_txt_RankingInMonth").val(DataInfo.rankingInMonth);
+        $("#Modal_Update_txt_AccountingEntry_Done").val(DataInfo.accountingEntry_Done);
+        $("#Modal_Update_txt_AccountingEntry_Cancel").val(DataInfo.accountingEntry_Cancel);
+        $("#Modal_Update_txt_AccountingEntry_Agritax").val(DataInfo.accountingEntry_Agritax);
+        $("#Modal_Update_txt_AccountingEntry_None").val(DataInfo.accountingEntry_None);
+        $("#Modal_Update_txt_CoefficientTask").val(DataInfo.coefficientTask);
+        $("#Modal_Update_txt_Scores_AccountingEntry").val(DataInfo.scores_AccountingEntry);
+        $("#Modal_Update_txt_Scores_Plus").val(DataInfo.scores_Plus);
+        $("#Modal_Update_txt_Scores_Total").val(DataInfo.scores_Total);
+        $("#Modal_Update_txt_Note").val(DataInfo.note);
+
+
+        $("#Modal_Update_ViewInfo").css("display", "");
+        $("#Modal_Update_Waiting").css("display", "none");
+
+        $("#Modal_Update_btn_" + Action).css("display", "");
+    }
+    function Modal_Update_Save() {
+        var zMonthCurrent = $('#txt_MonthCurrent').text();
+        var zIndex = $("#Modal_Update_lbl_ItemIndex").text();
+        var zAutoKey = $("#Modal_Update_lbl_AutoKey").text();
+        var zEmployeeKey;
+        var zEmployeeName;
+        var zEmployeeID;
+        if (zAutoKey.length == 0) {
+            zEmployeeKey = $('#Modal_Update_sel_Employee').find(":selected").val();
+            zEmployeeName = $('#Modal_Update_sel_Employee').find(":selected").text();
+            zEmployeeID = $("#Modal_Update_txt_EmployeeID").val();
+        }
+        var zDepartmentKey = $('#Modal_Update_sel_Department').find(":selected").val();
+        var zDepartmentName = $('#Modal_Update_sel_Department').find(":selected").text();
+
+        var zRankingInMonth = $("#Modal_Update_txt_RankingInMonth").val();
+        var zAccountingEntry_Done = $("#Modal_Update_txt_AccountingEntry_Done").val();
+        var zAccountingEntry_Cancel = $("#Modal_Update_txt_AccountingEntry_Cancel").val();
+        var zAccountingEntry_Agritax = $("#Modal_Update_txt_AccountingEntry_Agritax").val();
+        var zAccountingEntry_None = $("#Modal_Update_txt_AccountingEntry_None").val();
+        var zCoefficientTask = $("#Modal_Update_txt_CoefficientTask").val();
+        var zScores_AccountingEntry = $("#Modal_Update_txt_Scores_AccountingEntry").val();
+        var zScores_Plus = $("#Modal_Update_txt_Scores_Plus").val();
+        var zScores_Total = $("#Modal_Update_txt_Scores_Total").val();
+        var zNote = $("#Modal_Update_txt_Note").val();
+
+        $("#Modal_Update_Waiting").css("display", "");
+        $("#Modal_Update_btn_Save").css("display", "none");
+
+        var zDataUpdate = {
+            "key": zAutoKey,
+            "monthUpdate": zMonthCurrent,
+            "employeeKey": zEmployeeKey,
+            "employeeID": zEmployeeID,
+            "employeeName": zEmployeeName,
+            "departmentKey": zDepartmentKey,
+            "departmentName": zDepartmentName,
+            "rankingInMonth": zRankingInMonth,
+            "accountingEntry_Done": zAccountingEntry_Done,
+            "accountingEntry_Agritax": zAccountingEntry_Agritax,
+            "accountingEntry_Cancel": zAccountingEntry_Cancel,
+            "accountingEntry_None": zAccountingEntry_None,
+            "coefficientTask": zCoefficientTask,
+            "scores_AccountingEntry": zScores_AccountingEntry,
+            "scores_Plus": zScores_Plus,
+            "scores_Total": zScores_Total,
+            "note": zNote
+        };
+        //$("#txt_MessageLog").html(JSON.stringify(zDataUpdate));
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/EntryScores_Admin?handler=Update",
+            data: JSON.stringify(zDataUpdate),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#Modal_Update_Waiting").css("display", "none");
+                $("#Modal_Update_btn_Save").css("display", "");
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                if (dataResponse.id != "ERROR") {
+                    if (dataResponse.code == "200") {
+                        var zCurrentRow = $("#LV_Index_" + zIndex);
+                        //zCurrentRow.find("td:eq(0)").text(dataResponse.employeeID);
+                        //zCurrentRow.find("td:eq(1)").text(dataResponse.employeeName);
+                        zCurrentRow.find("td:eq(2)").text(dataResponse.rankingInMonth);
+                        zCurrentRow.find("td:eq(3)").text(dataResponse.accountingEntry_Done);
+                        zCurrentRow.find("td:eq(4)").text(dataResponse.accountingEntry_Cancel);
+                        zCurrentRow.find("td:eq(5)").text(dataResponse.accountingEntry_Agritax);
+                        zCurrentRow.find("td:eq(6)").text(dataResponse.accountingEntry_None);
+                        zCurrentRow.find("td:eq(7)").text(dataResponse.scores_AccountingEntry);
+                        zCurrentRow.find("td:eq(8)").text(dataResponse.scores_Plus);
+                        zCurrentRow.find("td:eq(9)").text(dataResponse.coefficientTask);
+                        zCurrentRow.find("td:eq(10)").text(dataResponse.scores_Total);
+                    }
+                    if (dataResponse.code == "201") {
+                        LV_LoadData_Ajax();
+                    }
+                }
+                else {
+                    alert("Error Update !");
+                    $("#txt_MessageLog").html("error : " + dataResponse.name);
+                }
+            })
+            .fail(function (r) {
+                $("#txt_MessageLog").html("error : " + r.responseText);
+            })
+
+        $("#Modal_Update_Form").modal('hide');
+    }
+    function Modal_Update_Del() {
+        var zIndex = $("#Modal_Update_lbl_ItemIndex").text();
+        var zAutoKey = $("#Modal_Update_lbl_AutoKey").text();
+
+        $("#Modal_Update_Waiting").css("display", "");
+        $("#Modal_Update_btn_Save").css("display", "none");
+        var zDataUpdate = {
+            "autoKey": zAutoKey
+        };
+        // $("#txt_MessageLog").html(JSON.stringify(zDataUpdate));
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/EntryScores_Admin?handler=Delete",
+            data: JSON.stringify(zDataUpdate),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#Modal_Update_Waiting").css("display", "none");
+                $("#Modal_Update_btn_Save").css("display", "");
+                $("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                if (dataResponse.id != "ERROR") {
+                    if (dataResponse.code == "200") {
+                        var zCurrentRow = $("#LV_Index_" + zIndex);
+                        zCurrentRow.find("td:eq(0)").text("");
+                        zCurrentRow.find("td:eq(1)").text("");
+                        zCurrentRow.find("td:eq(2)").text("");
+                        zCurrentRow.find("td:eq(3)").text("");
+                        zCurrentRow.find("td:eq(4)").text("");
+                        zCurrentRow.find("td:eq(5)").text("");
+                        zCurrentRow.find("td:eq(6)").text("");
+                        zCurrentRow.find("td:eq(7)").text("");
+                        zCurrentRow.find("td:eq(8)").text("");
+                        zCurrentRow.find("td:eq(8)").text("");
+                        zCurrentRow.find("td:eq(9)").text("");
+                        zCurrentRow.find("td:eq(10)").text("");
+                    }
+                }
+                else {
+                    alert("Error Update !");
+                    $("#txt_MessageLog").html("error : " + dataResponse.name);
+                }
+            })
+            .fail(function (r) {
+                $("#txt_MessageLog").html("error : " + r.responseText);
+            })
+
+        $("#Modal_Update_Form").modal('hide');
+    }
+</script>
+<script>
+    var DataCollectInfo;
+    function CollectInfo() {
+        var zEmployeeSearch = $("#Modal_Update_txt_EmployeeID").val();
+        $("#Modal_Update_btn_Waiting").css("display", "");
+        $("#Modal_Update_btn_Search").css("display", "none");
+        var zDataRequest = { "employeeSearch": zEmployeeSearch };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/EntryScores_Admin?handler=CollectInfo",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#Modal_Update_btn_Waiting").css("display", "none");
+                $("#Modal_Update_btn_Search").css("display", "");
+
+                DataCollectInfo = dataResponse;
+                CollectDisplay();
+            })
+            .fail(function (r) {
+                $("#txt_MessageLog").html("error : " + r.responseText);
+            })
+    }
+    function CollectDisplay() {
+        var n = DataCollectInfo.length;
+
+        if (DataCollectInfo[0].id == "ERROR") {
+            alert("Error !")
+            $("#txt_MessageLog").html(DataCollectInfo[0].name);
+        }
+        else {
+            $('#Modal_Update_sel_Employee').html("");
+            if (DataCollectInfo[0].id == "NONE") {
+                $('#Modal_Update_sel_Employee').append("<option value='None' selected>Choose...</option>");
+            }
+            else {
+
+                for (i = 1; i < n; i++) {
+                    $('#Modal_Update_sel_Employee').append("<option value='" + DataCollectInfo[i].employeeKey + "'>" + DataCollectInfo[i].employeeName + "</option>");
+                }
+                $('#Modal_Update_sel_Department').val(DataCollectInfo[1].departmentKey);
+                $("#Modal_Update_txt_EmployeeID").val(DataCollectInfo[1].employeeID);
+            }
+        }
+    }
+    function GetEmployeeInfo(EmployeeKey) {
+
+        var zResult = "";
+        var n = DataCollectInfo.length;
+        for (i = 1; i < n; i++) {
+            if (EmployeeKey == DataCollectInfo[i].employeeKey) {
+                zResult = DataCollectInfo[i].employeeID;
+                break;
+            }
+        }
+
+        return Result;
+    }
+    $("#Modal_Update_sel_Employee").on('change', function () {
+        var zEmployeeKey = $('#Modal_Update_sel_Employee').find(":selected").val();
+        //alert(zEmployeeKey);
+        var n = DataCollectInfo.length;
+        for (i = 1; i < n; i++) {
+            if (zEmployeeKey == DataCollectInfo[i].employeeKey) {
+                $('#Modal_Update_sel_Department').val(DataCollectInfo[i].departmentKey);
+                $("#Modal_Update_txt_EmployeeID").val(DataCollectInfo[i].employeeID);
+                break;
+            }
+        }
+
+    });
+</script>
+<script>
+    function Modal_UploadFile_Show(Index) {
+        var zItemKey = "";
+        zItemKey = $("#LV_lbl_EmployeeKey_" + Index).text();
+
+        $("#Modal_UploadFile_Form").modal('show');
+    }
+</script>
+

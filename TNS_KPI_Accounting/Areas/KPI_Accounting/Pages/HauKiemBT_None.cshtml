@@ -1,0 +1,521 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Accounting.Pages.HauKiemBT_NoneModel
+@{
+}
+<!-- DataTables -->
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Accounting/Submenu" style="text-decoration:none; color:#4c4c4c">Kế toán</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Hậu kiểm không bút toán</span>
+    </div>
+</div>
+<div class="row mb-2" style="padding-top:10px;">
+    <div class="col-12 text-center text-primary" style="font-size:22px; font-weight:bold">
+        HẬU KIỂM KHÔNG BÚT TOÁN
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6 md-3">
+        <div class="input-group">
+            <input id="txt_UserID" type="text" class="form-control  w-auto" placeholder="User IPCAS">
+            <button class="btn btn-secondary" onclick="Modal_Selected_Ajax()">
+                <i class="fas uil-users-alt"></i>
+            </button>
+            <select id="MonthView" class="form-select">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+            <select id="YearView" class="form-select">
+                @for (int i = 2020; i < 2025; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3">
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10 md-3">
+        <div class="input-group">
+            <input id="txt_Module" type="text" class="form-control" placeholder="Module" aria-label="Module">
+            <input id="txt_MaCodeNV" type="text" class="form-control" placeholder="Code NV" aria-label="Code NV">
+            <input id="txt_Search" type="text" class="form-control w-50" placeholder="Nhặt dữ liệu" aria-label="Tìm kiếm">
+
+            <button class="btn btn-primary w-auto" onclick="btn_Search_Click()">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="btn btn-danger w-auto" onclick="btn_SearchGroupBy_Click()">
+                Thống kê ngày
+            </button>
+            <button class="btn btn-success w-auto" onclick="ModalShow()">
+                Phân tích
+            </button>
+        </div>
+    </div>
+    <div class="col-md-1">
+    </div>
+</div>
+<div id="lbl_ResultOfSearch" style="font-size:15px; font-weight:bold; color:navy">
+</div>
+<div style="width:100%;overflow: auto;">
+    <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 2500px;">
+        <thead id="LV_DataHeader">
+        </thead>
+
+        <tbody id="LV_DataBody">
+        </tbody>
+
+    </table>
+    <div class="row ">
+        <div class="col-12 text-center">
+            <div id="PageNumberView" class="btn-group me-2" role="group" aria-label="First group">
+            </div>
+        </div>
+    </div>
+
+
+    <div id="LV_Waiting" style="display:none">
+        <div class='text-center'>
+            <div class='spinner-border text-primary m-5' role='status'>
+                <span class='sr-only'>Loading...</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+
+<div id="Modal_Area">
+    <div class="modal fade" id="Modal_Info_Form" tabindex="-1" aria-labelledby="Modal_Info_Label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Info_Title">Thống kê dữ liệu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Info_Body" class="mb-3 row">
+                        <div style="display:none">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-8">
+                                <table id="Modal_LV_Info" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:14px">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:200px">User Name </th>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:120px"> Total </th>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:120px">Normal  </th>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:120px"> Cancel </th>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:120px"> AA </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="Modal_LV_Info_Body">
+                                    </tbody>
+                                </table>
+                                <div id="Modal_Info_Waiting" style="display:none">
+                                    <div class='text-center'>
+                                        <div class='spinner-border text-primary m-1' role='status'>
+                                            <span class='sr-only'>Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <table id="Modal_LV_Module" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:14px">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:200px">Module Name </th>
+                                            <th class="text-center bg-primary text-light align-middle" style="width:120px"> Tổng cộng </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="Modal_LV_Module_Body">
+                                    </tbody>
+                                </table>
+                                <div id="Modal_Info_Waiting" style="display:none">
+                                    <div class='text-center'>
+                                        <div class='spinner-border text-primary m-1' role='status'>
+                                            <span class='sr-only'>Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="Modal_Selected_Form" tabindex="-1" aria-labelledby="Modal_Selected_Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Modal_Selected_Title">Chọn nhân viên </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="Modal_Selected_Body" class="mb-3 row">
+                        <div style="display:none">
+                            <div id="Modal_Selected_lbl_ItemIndex"></div>
+                            <div id="Modal_Selected_lbl_ItemKey"></div>
+                            <div id="Modal_Selected_lbl_UnitKey"></div>
+                        </div>
+
+                    </div>
+                    <div id="Modal_Selected_Panel"></div>
+                    <div id="Modal_Selected_Waiting" style="display:none">
+                        <div class='text-center'>
+                            <div class='spinner-border text-primary m-1' role='status'>
+                                <span class='sr-only'>Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //LV_LoadData_Ajax();
+        $('#MonthView option')[5].selected = true;
+        $('#YearView option')[3].selected = true;
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+
+</script>
+
+<script>
+    var _Data;
+    var _PageSelected = "";
+    var _PageSize;
+    function btn_Search_Click() {
+        _PageSelected = "";
+        LV_LoadData_Ajax();
+    }
+    $('#PageNumberView').on('click', function (e) {
+        _PageSelected = e.target.id;
+        LV_LoadData_Ajax();
+    });
+    function LV_LoadData_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+        $("#PageNumberView").html("");
+
+        var zUserID = $("#txt_UserID").val();
+        var zModule = $("#txt_Module").val();
+        var zMaCodeNV = $("#txt_MaCodeNV").val();
+        var zSearchContent = $("#txt_Search").val();
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+
+        var zDataRequest = {
+            "monthView": zMonthView, "yearView": zYearView, "userID": zUserID,
+            "module": zModule, "codeNV": zMaCodeNV, "searchContent": zSearchContent, "pageSelected": _PageSelected
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/HauKiemBT_None?handler=LoadData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#LV_Datatable").css("width", "2500px");
+                _Data = dataResponse;
+                LV_DisplayData(dataResponse);
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_DisplayData(dataview) {
+        var zContent = "";
+        var zHeader = "";
+        var zPageTotal, zPageSelectedIndex;
+        var zStyle_RecordView = "";
+        var zRecordTotal;
+        if (dataview.info.name == "ERROR") {
+            $("#txt_MessageLog").html(dataview.info.name);
+        }
+        else {
+            var zPageNumberView = "";
+            $("#lbl_ResultOfSearch").html("Tổng số record : " + dataview.info.recordTotal);
+            zPageSelectedIndex = parseInt(dataview.info.pageNumber);
+            _PageSize = parseInt(dataview.info.pageSize);
+            zPageTotal = parseInt(dataview.info.pageTotal);
+            if (zPageTotal > 1) {
+                for (i = 1; i <= zPageTotal; i++) {
+                    if (zPageSelectedIndex == i)
+                        zPageNumberView += "<button id='page" + i + "' type='button' class='btn btn-outline-secondary active'>" + i + "</button>"
+                    else
+                        zPageNumberView += "<button id='page" + i + "' type='button' class='btn btn-outline-secondary'>" + i + "</button>"
+                }
+            }
+            $("#PageNumberView").html(zPageNumberView);
+            var k = 0;
+            k = dataview.fieldsName.length;
+            zHeader += "<tr style='cursor:pointer'>";
+            zHeader += "    <th class='text-center text-light bg-primary align-middle'> STT </th>";
+            for (i = 0; i < k; i++) {
+                zHeader += "    <th class='text-center text-light bg-primary align-middle'> " + dataview.fieldsName[i] + "</th>";
+            }
+            zHeader += "</tr>";
+            zHeader += "<tr>";
+            zHeader += "    <th class='text-center align-middle'>  </th>";
+            for (i = 0; i < k; i++) {
+                zHeader += "    <th class='text-center align-middle'> " + dataview.fieldsNote[i] + "</th>";
+            }
+            zHeader += "</tr>";
+
+            $("#LV_DataHeader").html(zHeader);
+
+            var n = dataview.dataOfTable.length;
+            for (i = 0; i < n; i++) {
+
+                zContent += "       <tr style='cursor:pointer'>";
+                zContent += "           <td style='width:50px'>";
+                zContent += "               <div> " + (((zPageSelectedIndex - 1) * _PageSize) + i + 1) + " </div>";
+                zContent += "           </td>";
+                if (k > 8) {
+                    for (j = 0; j < 8; j++) {
+                        zContent += "           <td style='width:100px'>" + dataview.dataOfTable[i][j] + "</td>";
+                    }
+                    for (j = 8; j < k; j++) {
+                        zContent += "           <td style='width:220px'>" + dataview.dataOfTable[i][j] + "</td>";
+                    }
+                }
+                else
+                {
+                    for (j = 0; j < k; j++) {
+                        zContent += "           <td style='width:220px'>" + dataview.dataOfTable[i][j] + "</td>";
+                    }
+                }
+                zContent += "       </tr>";
+            }
+
+            $("#LV_DataBody").html(zContent);
+
+        }
+    }
+</script>
+<script>
+    function ModalShow() {
+        $("#Modal_Info_Form").modal('show');
+        $("#Modal_Info_Waiting").css("display", "");
+        Get_AnalyticsData();
+
+    }
+    function Get_AnalyticsData() {
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+
+        var zDataRequest = { "monthView": zMonthView, "yearView": zYearView };
+        $("#Modal_Info_Title").text("Thống kê dữ liệu : Hậu kiểm bút toán " + zMonthView + "-" + zYearView);
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/HauKiemBT_None?handler=GeneralAnalytics",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                AnalyticsByGeneral_Display(dataResponse);
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/HauKiemBT_None?handler=AnalyticsByModule",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                //$("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                AnalyticsByModule_Display(dataResponse);
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function AnalyticsByGeneral_Display(dataview) {
+        var zContent = "";
+        var zStyle_RecordView = "";
+
+        var n = dataview.length;
+        if (n > 0) {
+            var k = dataview[0].length;
+            for (i = 0; i < n; i++) {
+
+                zContent += "       <tr style='cursor:pointer'>";
+                zContent += "           <td style='" + zStyle_RecordView + "'>" + dataview[i][0] + "</td>";
+                for (j = 1; j < k; j++) {
+                    zContent += "           <td class='text-end' style='" + zStyle_RecordView + "'>" + dataview[i][j] + "</td>";
+                }
+                zContent += "       </tr>";
+            }
+        }
+        $("#Modal_LV_Info_Body").html(zContent);
+        $("#Modal_Info_Waiting").css("display", "none");
+    }
+    function AnalyticsByModule_Display(dataview) {
+        var zContent = "";
+        var zStyle_RecordView = "";
+
+        var n = dataview.length;
+        if (n > 0) {
+            var k = dataview[0].length;
+            for (i = 0; i < n; i++) {
+
+                zContent += "       <tr style='cursor:pointer'>";
+                zContent += "           <td style='" + zStyle_RecordView + "'>" + dataview[i][0] + "</td>";
+                for (j = 1; j < k; j++) {
+                    zContent += "           <td class='text-end' style='" + zStyle_RecordView + "'>" + dataview[i][j] + "</td>";
+                }
+                zContent += "       </tr>";
+            }
+        }
+        $("#Modal_LV_Module_Body").html(zContent);
+        $("#Modal_Info_Waiting").css("display", "none");
+    }
+
+</script>
+
+<script>
+    function Modal_Selected_Ajax() {
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+        var zDataRequest = { "monthView": zMonthView, "yearView": zYearView };
+
+        $("#Modal_Selected_Title").text("Chọn nhân viên xem trong " + zMonthView + "-" + zYearView);
+        $("#Modal_Selected_Form").modal('show');
+        $("#Modal_Selected_Waiting").css("display", "");
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/HauKiemBT_None?handler=SearchEmployee",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                Modal_DisplayData(dataResponse);
+                $("#Modal_Selected_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function Modal_DisplayData(dataview) {
+        var zStyle_RecordView = "";
+        //$("#Modal_Selected_Panel").html(JSON.stringify(dataview));
+        var n = dataview.length;
+        var zContent = "";
+        for (i = 1; i < n; i++) {
+            zContent += "<div class='row'>";
+            zContent += "   <div class='col-12'>";
+            zContent += "       <div class='input-group mb-2'>";
+            zContent += "           <span class='input-group-text' style='width:120px'> " + dataview[i][0] + "</span>";
+            zContent += "           <input type='text' class='form-control' value='" + dataview[i][2] + "' aria-label='' aria-describedby='button-addon2' > ";
+            zContent += "           <button class='btn btn-primary' onclick='Modal_btn_Click(\"" + dataview[i][0] + "\")'><i class='uil-eye'> </i> </button>";
+            zContent += "       </div>";
+            zContent += "  </div>";
+            zContent += "</div>";
+        }
+        $("#Modal_Selected_Panel").html(zContent);
+    }
+
+    function Modal_btn_Click(ID) {
+
+        $("#txt_UserID").val(ID);
+        $("#Modal_Selected_Form").modal('hide');
+    }
+</script>
+
+<script>
+
+    function btn_SearchGroupBy_Click() {
+        _PageSelected = "";
+        LV_LoadDataGroupBy_Ajax();
+    }
+
+    function LV_LoadDataGroupBy_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+        $("#PageNumberView").html("");
+
+        var zUserID = $("#txt_UserID").val();
+        var zModule = $("#txt_Module").val();
+        var zMaCodeNV = $("#txt_MaCodeNV").val();
+        var zSearchContent = $("#txt_Search").val();
+        var zMonthView = $('#MonthView').find(":selected").val();
+        var zYearView = $('#YearView').find(":selected").val();
+
+        var zDataRequest = {
+            "monthView": zMonthView, "yearView": zYearView, "userID": zUserID,
+            "module": zModule, "codeNV": zMaCodeNV, "searchContent": zSearchContent, "pageSelected": _PageSelected
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Accounting/HauKiemBT?handler=LoadDataGroupBy",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#LV_Datatable").css("width", "800px");
+                _Data = dataResponse;
+                LV_DisplayData(dataResponse);
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+
+</script>

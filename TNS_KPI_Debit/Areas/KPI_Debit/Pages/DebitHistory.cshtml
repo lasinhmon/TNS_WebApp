@@ -1,0 +1,172 @@
+﻿@page
+@model TNS_KPI.Areas.KPI_Debit.Pages.DebitHistoryModel
+@{
+}
+<link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/libs/datatables/css/dataTables.min.css" rel="stylesheet" type="text/css" />
+<div style="width:100%; margin:-20px 0 0 -20px">
+    <div style="padding:5px; font-weight:bold; font-size:13px">
+        <a href="~/Index" style="text-decoration:none; color:#4c4c4c">Home</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="#" style="text-decoration:none; color:#4c4c4c">KPI</a>
+        <span class="uil-angle-double-right"></span>
+        <a href="~/KPI_Debit/Submenu" style="text-decoration:none; color:#4c4c4c">Dư nợ</a>
+        <span class="uil-angle-double-right"></span>
+        <span style="color:maroon">Lịch sử tài khoản</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 text-center text-primary" style="font-size:26px; font-weight:bold">
+        Dư Nợ
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div>
+            <div class="input-group">
+                <input id="txt_Search" type="text" class="form-control w-auto" placeholder="Tìm kiếm" aria-label="Tìm kiếm" aria-describedby="button-addon2">              
+                <select id="Month_View" class="form-select w-sm">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        var zVal = @i.ToString().PadLeft(2, '0') + "-2023";
+                        <option value="@zVal">@zVal</option>
+                    }
+                </select>
+                <select id="TRCD_View" class="form-select w-sm">
+                    @foreach (string[] zItem in Model.Department_TRCD)
+                    {
+                        <option value="@zItem[3]">@zItem[2]</option>
+                    }
+                </select>
+                <button class="btn btn-primary" onclick="btn_Search_Click()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div style="color:maroon; font-weight:bold; padding-left:10px">
+            <div id="Info_View"></div>
+        </div>
+
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <table id="LV_Datatable" class="table table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Mã Khách Hàng</th>
+                        <th class="text-center">Tên Khách Hàng</th>
+                       <!-- <th class="text-center">Số tài khoản</th>-->    
+                        <th class="text-center">Số nợ</th>
+                        <th class="text-center">Giao dịch tại</th>
+                        <th class="text-center">Thuộc Hội sở/Phòng</th>
+                    </tr>
+                </thead>
+
+                <tbody id="LV_DataBody">
+                </tbody>
+
+            </table>
+            <div id="LV_Waiting" style="display:none">
+                <div class='text-center'>
+                    <div class='spinner-border text-primary m-5' role='status'>
+                        <span class='sr-only'>Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div style="cursor:pointer" onclick="MessageLog_Show()">
+        <i class="uil-apple"></i>
+    </div>
+    <div id="txt_MessageLog" class="row" style="display:none; padding:20px; ">
+    </div>
+</div>
+
+
+<div id="Modal_Area">
+     
+</div>
+
+<!-- Required datatable js -->
+<script src="~/libs/jquery/jquery.min.js"></script>
+<script src="~/libs/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/libs/datatables/js/dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function MessageLog_Show() {
+        $("#txt_MessageLog").css("display", "");
+    }
+</script>
+
+<script>
+    function btn_Search_Click() {
+        LV_LoadData_Ajax();
+
+    }
+    function LV_LoadData_Ajax() {
+
+        $("#LV_Waiting").css("display", "");
+        $("#LV_DataBody").html("");
+
+        var zMonth = $('#Month_View').find(":selected").val();
+        var zTRCD = $('#TRCD_View').find(":selected").val();
+        var zSearchContent = $("#txt_Search").val();
+        //alert(zMonth + ":" + zTRCD + ":" + zSearchContent);
+        var zDataRequest = { "monthView": zMonth, "trcd": zTRCD, "searchContent": zSearchContent };
+
+        $.ajax({
+            type: 'POST',
+            url: "/KPI_Debit/DebitHistory?handler=LoadData",
+            data: JSON.stringify(zDataRequest),
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (dataResponse) {
+                $("#txt_MessageLog").html(JSON.stringify(dataResponse));
+                LV_DisplayData(dataResponse, zDataRequest);
+                $("#LV_Waiting").css("display", "none");
+            })
+            .fail(function (error) {
+                alert('Error : ' + error.responseText);
+            });
+    }
+    function LV_DisplayData(dataview) {
+        var zStyle_RecordView = "";
+        var n = dataview.length;
+        var zContent = "";
+
+        if (dataview[0].id == "ERROR") {
+            $("#txt_MessageLog").html(dataview[i].name);
+        }
+        else {
+            $("#Info_View").text(dataview[0].name);
+            
+            for (i = 1; i < n; i++) {
+                zContent += "       <tr>";
+                zContent += "           <td >";
+                zContent += "               <div> " + i + " </div>";
+                zContent += "           </td>";
+                zContent += "           <td>" + dataview[i].id + "</td>";
+                zContent += "           <td>" + dataview[i].name + "</td>";
+            //    zContent += "           <td>" + dataview[i].accountNumber + "</td>";
+                zContent += "           <td class='text-end'>" + dataview[i].money + "</td>";
+                zContent += "           <td>" + dataview[i].trcd + "</td>";
+                zContent += "           <td>" + dataview[i].departmentID + "</td>";
+                zContent += "       </tr>";
+            }
+            $("#LV_DataBody").html(zContent);
+        }
+    }
+</script>
